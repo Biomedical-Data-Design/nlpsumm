@@ -1,0 +1,200 @@
+//--- smoking --- //
+
+provide 'smoking';
+
+defSpanType snouns =~ trie smoking, tobacco use, cigarette use, cigarette smoking, tobacco smoking, cigar smoking, cigars, cigar, cigarette, cigarettes, tob, smoking history, cigs, cigarette smoking history, cigar smoking history, tobacco smoking history, tob, tobacco, cigarette abuse, cigar abuse, smoking abuse, tobacco abuse, tobac, smoking cigarettes, smoking cigars, smoking tobacco, nicotine use; // added nicotine use
+
+defSpanType sactivity =~ trie alcohol consumption, alcohol use, alcohol, substances, substances abuse, substances use, drinking, etoh, recreational drugs, drugs, narcotics, illicits, history of alchoholism, detox program, current tobacco use, current smoking use, current cigarette smoking use;
+
+defSpanType scvd =~ trie obesity, central obesity, adiposity, general obesity, obese, morbid obesity, morbidly obese, coronary heart disease, cad, coronary artery disease, heart disease, coronary disease, coronary ischemia, coronary arteriosclerosis, chd, hypertension, hypertensive disorder, htn, ht, high blood pressure, pulmonary hypertension, malignant hypertension, hyperlipidemia, hyperlipoproteinemia, hyperlipidaemia, dyslipidemia, hypercholesterolemia, hld, hl, lipids, hlp, high cholesterol, hypercholesteremia, high chol, diabetes mellitus, aodm, diabetes mellitus type 2, diabetes mellitus type ii, diabetes mellitus type 1, diabetes mellitus type i,aodm type 2, aodm type ii, aodm type 1, aodm type i, adult onset diabetes mellitus, adult onset diabetes mellitus type 2, adult onset diabetes mellitus type ii, dmi, dmii,dm1, dm2, dmt1, dmt2, dmtii, dmti,diabetic ketoacidosis, diabetes type 1, diabetes type i, diabetes type 2, diabetes type ii, aod, adult onset diabetes, type 1 diabetes, type 2 diabetes, type i diabetes, type ii diabetes, type 1 diabetes mellitus, type 2 diabetes mellitus, type i diabetes mellitus, type ii diabetes mellitus, dka, hypersmolar hyperglycaemic state, hypoglycaemia, hyperglycaemia, non-insulin-dependent diabetes mellitus, diabetes, dm, type ii dm, type i dm, insulin-dependent diabetes, insulin dependent diabetes mellitus, iddm, dm 2, dm 1, insulin-requiring dm, niddm, insulin-dependent diabetes mellitus, insulin dependent diabetes mellitus, insulin-dependent dm, insulin dependent dm, iddm, non-insulin-dependent diabetes, neuropathy, frozen shoulder, gerd, glucose intolerance with post prandial hyperglycemia, postmenopausal, cervical osteoarthritis ddd, hypovitaminosis d, microscopic hematuria with negative work up, anxiety, depression, bladder cancer, cataract, stroke, cards, palpitations, status post coronary artery bypass surgery, dka, hypersmolar hyperglycaemic state, hypoglycaemia, hyperglycaemia, status post bypass surgery, coronary artery bypass surgery, hyperlipoproteinemia, coronary ischemia, coronary arteriosclerosis, dyspepsia, insomnia, syncope, carotid stenosis, psychosis, osteoarthritis, cerebrovascular disease, recurrent utis, hypothyroidism, hidradenitis, chronic venous stasis, pulmht, osa, copd, chronic venous stasis with recurrent leg ulcers, peripheral neuropathy , h/o left foot infection, erectile dysfunction, onychomycosis, diabetic retinopathy, ischemic cardiomyopathy, inferior myocardial infarction, polyp of colon, sleep apnea,  status post cholecystectomy, chronic obstructive pulmonary disease,arthritis, congestive heart failure secondary to diastolic dysfunction, congestive heart failure, renal insufficiency with baseline creatinine approximately 3, renal insufficiency, atrial fibirllation, peripheral vascular disease, colon polyps, diverticulosis adenoid hypertrophy, humeral fracture, peripheral arterial disease,aortic stenosis, venous stasis with chronic leg ulcers, chf, prior history, b-cell lymphoma, pontine stroke, basilar artery stent, herpes zoster, graft versus host disease, hyperhomocysteinemia, pseudomonas pneumonia, heart murmur, bph, hepatitis c, gallstones,atrial fibrillation, ckd, psoriasis, mental retardation, benign prostatic hypertrophy, insomnia, nephrotic syndrome, history of previous cva, status post cabg, glucose intolerance, abdominal aortic aneurysm repair, chronic pneumonia, chronic wound infection, history of chronic urinary tract infections, change in mental status, cad s/p ptca, pvd, as x/p avr, mr, interstitial lung disese, mi, right upper quadrant pain, dyspnea, glasses, esophageal cancer, seizure disorder, nonspecific peripheral neuropathy, spinal stenosis, pe, carotid artery stenosis, hepatitis c, otalgia, bipolar disease, obsessive compulsive disorder, cardiac risk factors of dm, sp oral cancer, attention deficit disorder, diabetic neuropathy, overweight, renal transplant, cad s/p cabg, gout, nephrotic syndrome, chronic renal insufficiency, renal failure, oral hypoglycemic requiring diabetes, insulin-requiring diabetes mellitus, non-insulin dependent diabetes, gastroesophageal reflux disease, chronic renal dysfunction, atrial fibrillation, parkinsons disease, glaucoma; //new_diseases from neuropathy
+
+defDict sno = never, no, negative, neg, none, denies, not;
+
+defDict snumaux= to, ,, and, or;
+
+defTokenProp snum1:in =: ...[@sactivity]...||...[a(snumaux)]...;
+
+defSpanType smanyactivities =: ...[@sactivity snum1:in* @sactivity?]...;
+
+defDict sstopword = for, since, still;//, has, .;
+
+defSpanType ssmoker =~ trie former smoker, ex smoker, past smoker, ex-smoker, exsmoker, prior smoker, remote smoker, former heavy smoker, non-smoker, heavy smoker;
+
+defDict anything = former, ex, past, non, prior, remote, non;
+
+defDict ssmkadjective = past, prior, ex, former, remote, heavy;
+
+defDict squit = quit, quited, discontinue, discontinued, stopped, stop, quite, quitting;
+
+defDict sstuff = :, -;
+
+defSpanType scurrent =~ trie tobacco use, cigarette use, nicotine use, cigarette smoking, tobacco smoking, smoker, tobacco user, cigarette user, smoking, tobacco; 
+
+defDict smoke = smoke, tobacco, tob, smoking;
+
+defDict snumaux2= to, ,, and;
+
+defTokenProp snum2:in =: ...[@scvd]...||...[a(snumaux2)]...;
+
+defSpanType smanycvd =: ...[@scvd num2:in* @scvd?]...;
+
+defDict csex = male, female, f, m, man, woman, gentleman, patient;
+
+defDict onlynouns = cigars, cigs, cigarettes;
+
+defSpanType neversmoker=~ trie non smoker, non-smoker, nonsmoker;
+
+defSpanType shistory =:
+... [eq('w') eq('/') eq('pmhx') eq('of')] ... ||
+... [eq('w') eq('/') eq('pmhx') eq('for')] ... ||
+... [eq('w') eq('/') eq('pmh') eq('of')] ... ||
+... [eq('w') eq('/') eq('pmh') eq('for')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('history') eq('of')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('history') eq('for')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('hx') eq('of')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('h') eq('of')] ... ||
+... [eq('pmhx') eq('of')] ... ||
+... [eq('pmhx') eq('for')] ... ||
+... [eq('pmh') eq('of')] ... ||
+... [eq('pmh') eq('for')] ... ||
+... [eq('medical')? eq('history') eq('of')] ... ||
+... [eq('medical')? eq('h') eq('/') eq('o')] ... ||
+... [eq('medical')? eq('history') ]... ||
+... [eq('medical')? eq('hx') ]... ||
+... [eq('medical')? eq('hx') eq('of')]...;
+
+defSpanType csmoking=:
+// these are theoritically specific rules for smoking for run second
+//... [@smanycvd a(sstuff) re('[0-9]+') eq('/') re('[0-9]+') eq('smoking')] ... ||
+//... [eq('has') eq('not') eq('quit') eq('smoking')] ... ||
+//... [re('(he|she)') eq('reports') eq('a') re('[0-9]+') eq('pyr') eq('hx') eq('of') eq('tobacco') eq(',') ] ... ||
+//... [eq('habits') eq(':') eq('smokes') eq('about')] ... ||
+//
+... @scvd [eq('smoking')] ... ||
+... [eq('smoking')] @scvd  ... ||
+... [eq('smoking') re('[0-9]+') eq('-')? re('[0-9]+') a(onlynouns) any eq('day')] ...||
+... [re('(he|she)') eq('averages') re('[0-9]+')?  re('[0-9]+') eq('/')  re('[0-9]+') any{0,2} a(onlynouns)] ... ||
+... [eq('still') eq('smoking')] ... ||
+... [a(smoke) a(sstuff) any @snouns] ... ||
+... [a(smoke) a(sstuff) eq('started') re('[0-9]+') ] ... ||
+... [a(smoke) a(sstuff) re('[0-9]') eq('cig') eq('/') eq('day')] ... ||
+... [a(smoke) a(sstuff) re('[0-9]+') eq('pack') eq('/') eq('y') eq('since')]...||
+... [a(smoke) a(sstuff) eq('+') eq('for') re('[0-9]+') eq('years')] ...||
+... [eq('smoking') eq('has') eq('decreased') eq('to') re('[0-9]+')]...||
+... [eq('does') eq('smoke') a(onlynouns)? ] ... || // ****************
+... [any eq('per') eq('day') eq('pack') eq('smoker')] ... ||
+... [any eq('pack')  eq('per') eq('day') eq('smoker')] ... ||
+... [eq('smoke') any{1,2} eq('pack') any eq('day')]...||
+... [eq('smoke') re('[0-9]') eq('cig') eq('/') eq('day')] ... ||
+... [eq('+') @scurrent] ... ||
+... [eq('habits') a(sstuff) a(smoke) a(sstuff) re('[0-9]') eq('/') re('[0-9]') eq('ppd')] ... ||
+... [eq('has') eq('smoked') re('[0-9]') eq('/') re('[0-9]') eq('ppd') eq('for')] ... ||
+... [eq('no') @snouns eq('for') re('(one|two|three|four|five|six|seven|eight|nine|ten|eleven)') re('(months|month)')] ... ||
+... [eq('active') any? @scurrent] ... ||
+... [!eq('or') eq('current') any? @scurrent] ... ||
+... [eq('is') eq('currently')? eq('a') !a(anything)? eq('smoker')] ... ||
+... [@scurrent eq('(') eq('+') eq(')')] ... ||
+... [@snouns a(sstuff)? eq('up') eq('to') any{2,3} eq('ppd') ] ... ||
+... [@snouns a(sstuff)? re('[0-9]+') eq('cig') eq('/') eq('day') ] ... ||
+... [@snouns a(sstuff)? eq('+') eq('for') re('[0-9]+') re('(years|yrs|y)')] ... ||
+... [eq('continues') eq('to') eq('be') eq('a') any{0,1} eq('smoker')]...||
+... [eq('continues') eq('to') eq('smoke')] ... ||
+... [eq('smokes')] ... ||
+... a(csex) re('(with|w)') eq('/')? @shistory? @smanycvd eq(',')? [@snouns] ... ||
+... a(csex) re('(w|with)') @shistory? @smanycvd? [@snouns] ... ||
+... a(csex) re('(w|with)') @shistory? @smanycvd [@scurrent] ...;
+
+defSpanType esmoking=:
+// uber specific rules for smoking and run second
+//... [eq('-') eq('tob') eq(':') eq('remote') eq('-')] ... ||
+//... [eq('social') eq('history') eq(':') eq('past') eq('tobacco') eq(',')] ... ||//might lead to false positives :P
+//
+... [eq('smoked') eq('at') eq('one') eq('point') eq('but') eq('unclear') eq('if') any{1,3} eq('smoking')] ...||     
+... [re('[0-9]+') eq('pack') eq('year') @snouns eq('history')]...||                                                  
+... [eq('ppd') eq('for') re('[0-9]+') eq('years')]...||                                                             
+... [re('(is|was)') eq('a') re('[0-9]+') a(sstuff)? eq('pack') any? eq('smoker')] ...||  
+... [@shistory @snouns eq('use')]...||                    //these two might give false positives!                                                                          
+... [eq('smoked') eq('in') eq('the') eq('past')] ...;                                                               
+
+defSpanType nsmoking =:
+// uber specific rules for run second
+//... eq('sh') eq('.')  [eq('doesn') eq('\'') eq('t') eq('smoke')] eq('.') ... ||
+//... eq('social') eq('history') eq(':') re('(he|she)') eq('has') eq('not') [eq('smoked')] eq(',') ... ||
+//... eq('social') eq('history') eq('.') [eq('doesn') eq('\'') eq('t') eq('smoke')] eq('.') ... ||
+//...[eq('social') eq('history') eq('smoking') eq(':') eq('no') eq('alcohol')]...||
+//...[eq('.') eq('cigarettes') eq(',') eq('none') eq('times') eq('years')]...||
+//... eq('.') [re('(he|she)') eq('is') eq('still') eq('not') eq('smoking')] eq('.')... ||///not this 
+///
+... eq('no') [eq('history') eq('of') @snouns] ...||
+... !a(sstopword) [@neversmoker] !a(sstopword)... ||
+... [eq('no') eq('etoh') any{1,2} @snouns ] ... ||
+... [eq('does') eq('not') eq('drink') any eq('smoke')] ... ||
+... [eq('habits') a(sstuff) eq('no') @nouns] ...||
+... eq('+') eq('etoh') a(sstuff) any{2,7} [eq('-') @snouns] ... ||
+...!a(sstopword) [eq('not') eq('a') eq('smoker')] !a(sstopword) ... ||
+...!a(sstopword) [eq('does') eq('not') eq('smoke')] !a(sstopword)...||
+...!a(sstopword) [a(sno) any? @smanyactivities @snouns] !a(sstopword)... ||
+...!a(sstopword) [a(sno) any? @snouns] !a(sstopword) !eq('x')... ||
+... [eq('never') eq('smoked')] ...||
+... [eq('never') eq('a')? eq('smoker')] ...||
+... [eq('is')? eq('a')? re('(lifetime|lifelong)')? @neversmoker] ... ||
+... [eq('neither') eq('drinks') re('(or|nor)') eq('smokes')] ... ||
+... [eq('neither') eq('smokes') re('(or|nor)') eq('drinks')] ... ||
+... [@snouns eq('status') a(sstuff)? eq('never') eq('smoked')]
+... [@snouns a(sstuff)? eq('.')? a(sno)] ...||
+... [@snouns a(sstuff) eq('never')] ...||
+... [eq('-') a(smoke)] ... ||
+... [a(smoke) a(sstuff) eq('denies')] ... || //
+... [a(smoke) a(sstuff) eq('none')] ... ||
+... [a(smoke) eq('none')] ... ||
+... [ eq('denies') any{0,10} @scurrent] ...;
+
+defSpanType psmoking =:
+//specific rules for the second run
+//...[a(csex) eq('with') @smanycvd eq('and') eq('a') eq('history') eq('of') eq('tobacco') eq('use')]...||
+//...[re('he|she') eq('smoked') eq('in') eq('the') eq('past') eq(',') eq('quit')]...||
+//...[eq('.') eq('no') eq('tobacco') eq('x') re('[0-9]+') eq('year')]...||
+//...[eq('smokes') re('[0-9]+') eq('ppd') eq('for') eq('many') eq('[') eq('unknown') eq(']') eq('years') eq('-') eq('quit') re('[0-9]+') eq('years') ]...||
+//...[eq('has') eq('no') eq('cigarettes') eq('in')]...||
+//...[eq('social') eq('history') eq(':') re('he|she') eq('is') eq('a') @ssmoker]...||
+//...[eq('patient') eq('is') eq('a') @ssmoker]...||
+//...[eq('smoking') eq('status') eq(':') @ssmoker]...||
+//...[eq('has') eq('a') eq('h') eq('/') eq('o') eq('smoking')  eq('and') @smanycvd]...||
+//...[eq('does') eq('not') eq('currently') eq('smoke') eq(';')]...||
+//... eq('(') eq('crf') a(sstuff) [@ssmoker] ... ||
+//
+... [eq('had') eq('a') re('[0-9]+') eq('-')? eq('pack') eq('-')? eq('year') eq('-')? eq('smoking') eq('history') any{0,1} a(squit)] ... ||
+... [eq('smoked') eq('until')] ...||
+... [eq('smoked') eq('for') re('[0-9]+') any{0,5} a(squit)] ... ||
+... [ eq('ex') a(sstuff) a(smoke) eq('x') re('[0-9]+') re('years|yrs|y')?] ... ||
+... [eq('still') eq('not')  eq('smoking') ] ... ||
+... [eq('remote') eq('tobacco')  eq('use') ] ... ||
+... [eq('remote') @shistory @snouns] ... ||
+... [a(smoke) a(sstuff) any{0,1} re('[0-9]+') eq('ppd') eq('x') re('[0-9]+') re('years|yrs|y')?] ... ||
+... [a(smoke) a(sstuff) eq('quit') re('[0-9]+')] ... ||
+... [eq('former')  re('[0-9]+') eq('py') eq('smoker') ] ... ||
+... [@snouns a(sstuff) a(squit) ] ... ||
+... [@snouns a(sstuff)? any{1,6} a(squit) re('[0-9]+') re('years|yrs|y')?  eq('ago')?] ... ||
+... [@snouns a(sstuff) any{1,6} a(squit) @snouns? ] ... ||
+... [@snouns eq(',')? eq('not') eq('at') eq('all')] ... ||
+... [@snouns eq(',')? a(squit) re('[0-9]+') eq('/')? re('[0-9]+')?] ... ||
+... [@ssmoker a(sstuff)  a(squit) eq('x') re('[0-9]+') eq('yrs')] ... ||
+... [@ssmoker eq(',')? a(sstuff)? a(squit)? eq('in')? re('[0-9]+')? re('(years|yrs|y)')?] ... ||
+... [@ssmoker a(sstuff)? eq('remote') re('[0-9]+') re('years|yrs|y')] ... ||
+... [@ssmoker any{1,5} a(squit) re('[0-9]+') re('(years|yrs|y)')] ... ||
+... [@ssmoker eq('d') eq('/') eq('c') re('[0-9]+')] ... ||
+... [a(ssmkadjective) any? eq('smoker') a(sstuff)? a(squit)? eq('x') re('[0-9]+')] ... ||
+... [a(ssmkadjective) re('[0-9]+') re('(py|ppd)') eq('smoker')] ... ||
+... [a(ssmkadjective) @snouns] ... ||
+... [!eq('not') a(squit) a(smoke)]...||
+... [!eq('not') a(squit) @snouns re('(years|yrs|y)')? eq('ago')? ] ... ||
+... [!eq('not') a(squit) @snouns eq('in')? re('[0-9]+')] ... ||
+... [!eq('not') a(squit) @snouns re('[^0-9]') any{0,2} re('(years|yrs|y)')? eq('ago')? ] ... ||
+... [!eq('not') a(squit) re('[^0-9]+') re('(years|yrs|y)') eq('ago')] ... ||
+... [!eq('not') a(squit) any{0,1} re('[0-9]+') re('(years|yrs|y)') eq('ago')] ... ||
+... [eq('used') eq('to') eq('smoke') eq(',')? eq('quit')] ... ||
+... [@neversmoker a(squit) re('[0-9]+') re('(years|yrs|y)')] ... ||
+... [eq('non') a(sstuff)? a(smoke) eq('for') re('[0-9]+') re('(years|yrs|y)')] ... ||
+... [eq('none') eq('over') re('[0-9]+') re('(years|yrs|y)')] ... ||
+... [eq('smoking') eq('history') any eq('none') eq('currently')] ... ||
+... [@shistory any a(squit) re('[0-9]+')] ... ;

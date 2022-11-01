@@ -1,0 +1,297 @@
+// --- coronary artery disease --- //
+
+provide 'cad';
+
+defSpanType cadmedications =~ trie pravachol, zetia;
+
+defSpanType caddiseases =~ trie coronary heart disease, cad, coronary artery disease, heart disease, coronary disease, coronary ischemia, coronary arteriosclerosis, chd, three-vessel coronary artery disease, diffuse cad, multivessel coronary artery disease;
+
+defSpanType cadcvd =~ trie hyperlipidemia, neuropathy, frozen shoulder, gerd, smoking, glucose intolerance with post prandial hyperglycemia, postmenopausal, cervical osteoarthritis ddd, hypovitaminosis d, obesity, central obesity, adiposity, general obesity, obese, morbid obesity, morbidly obese, microscopic hematuria with negative work up, anxiety, depression, bladder cancer, cataract, stroke, cards, palpitations, status post coronary artery bypass surgery, coronary artery bypass surgery, coronary artery bypass graft, diabetes mellitus, aodm, diabetes mellitus type 2, diabetes mellitus type ii, diabetes mellitus type 1, diabetes mellitus type i,aodm type 2, aodm type ii, aodm type 1, aodm type i, adult onset diabetes mellitus, adult onset diabetes mellitus type 2, adult onset diabetes mellitus type ii, dmi, dmii,dm1, dm2, dmt1, dmt2, dmtii, dmti,diabetic ketoacidosis, diabetes type 1, diabetes type i, diabetes type 2, diabetes type ii, aod, adult onset diabetes, type 1 diabetes, type 2 diabetes, type i diabetes, type ii diabetes, type 1 diabetes mellitus, type 2 diabetes mellitus, type i diabetes mellitus, type ii diabetes mellitus, dka, hypersmolar hyperglycaemic state, hypoglycaemia, hyperglycaemia, non-insulin-dependent diabetes mellitus, diabetes, dm, type ii dm, type i dm, insulin-dependent diabetes, status post bypass surgery, mild dyslipidemia, hyperlipoproteinemia, hyperlipidaemia, dyslipidemia, hypercholesterolemia, hld, hl, lipids, hypertension, hypertensive disorder, htn, ht, high blood pressure, insulin dependent diabetes mellitus, iddm, dm 2, dm 1, insulin-requiring dm, dyspepsia, depression, insomnia, syncope, carotid stenosis, psychosis, osteoarthritis, cerebrovascular disease, recurrent utis, hlp, hypothyroidism, high cholesterol, hidradenitis, chronic venous stasis, pulmht, osa, copd, chronic venous stasis with recurrent leg ulcers, peripheral neuropathy , h/o left foot infection, erectile dysfunction, onychomycosis, diabetic retinopathy, ischemic cardiomyopathy, inferior myocardial infarction, polyp of colon, sleep apnea,  status post cholecystectomy, chronic obstructive pulmonary disease, hypothyroidism, history of high cholesterol, peripheral arterial disease, aortic stenosis, hiatal hernia, history of asbestos exposure, arthritis, congestive heart failure secondary to diastolic dysfunction, congestive heart failure, renal insufficiency with baseline creatinine approximately 3, renal insufficiency, atrial fibirllation, peripheral vascular disease, colon polyps, diverticulosis adenoid hypertrophy, humeral fracture, peripheral arterial disease,aortic stenosis, niddm, pulmonary hypertension, venous stasis with chronic leg ulcers, chf, prior history, b-cell lymphoma, pontine stroke, basilar artery stent, herpes zoster, graft versus host disease, hypertension, hyperlipidemia, hyperhomocysteinemia, pseudomonas pneuomnia, heart murmur, bph, hepatitis c, gallstones, iddm, non-insulin-dependent diabetes,insulin dependent dm, insulin-dependent dm, atrial fibrillation, ckd, psoriasis, mental retardation, benign prostatic hypertrophy, insomnia, nephrotic syndrome, history of previous cva, status post cabg, glucose intolerance, abdominal aortic aneurysm repair, chronic pneumonia, chronic wound infection, history of chronic urinary tract infections, change in mental status, cad s/p ptca, pvd, as x/p avr, mr, interstitial lung disese, mi, right upper quadrant pain, dyspnea, glasses, esophageal cancer, seizure disorder, nonspecific peripheral neuropathy, malignant hypertension, spinal stenosis, pe, carotid artery stenosis, cardiac stent, stent placement, worsening as, gastroesophageal reflux disease, chronic renal dysfunction, atrial fibrillation, parkinsons disease, glaucoma;
+
+defDict cadnumaux= to, ,, and;
+
+defDict cadbe = is, was;
+
+defTokenProp cadnum1:in =: ...[@cadcvd]...||...[a(cadnumaux)]...;
+
+defSpanType cadmanycvd =: ...[@cadcvd cadnum1:in* @cadcvd?]...;
+
+defDict cadstuff = :, -, .;
+
+defDict cadrelative = father, mother, son, daughter, brother, sister, children, grandfather, grandmother, cousin, uncle, aunt;
+
+defSpanType cadsymptom =~ trie stable angina, unstable angina, angina, chest pain, chest pain consistent with angina, recurrent angina, moderately severe chest pain, mild central chest pain, recurrent chest pain, intermittent chest pain, substernal chest pain, retrosternal chest discomfort, angina pectoris, mild chest pain, progressive angina, intermitten angina, stuttering angina, exertional chest pain, anginal symptoms, limiting angina, chest discomfort, substernal chest pressure, mid-sternal chest pressure, mid-sternal chest pain, exertional angina, substernal pain, increasing angina with exertion, exertional chest pressure, chest pain, chestpain, intermittent angina, mid-sternal chest discomfort, mild chest discomfort, exertional chesty discomfort, current angina,substernal chest pressure, nocturnal angina, increasing angina, increasing angina pectoris, possible angina;
+
+defSpanType cadothersymptom =~ trie fever, diarrhea, fatigue, stress, anxiety, vomiting, nausea, dyspnea;
+
+defTokenProp cadnum2:in =: ...[@cadothersymptom]...||...[a(cadnumaux)]...;
+
+defSpanType cadothersymptoms =: ...[@cadothersymptom cadnum2:in* @cadothersymptom?]...;
+
+defDict cadnegated = no, not, denies, denied, without;
+
+defSpanType cadcatheter =~ trie left heart catheterisation, left heart catheterization, cardiac catheterisation, cardiac catheterization,cardiac cath, lhcath;
+
+defSpanType cadmi =~ trie  myocardial infarction, mi, myocardial infarctions, anteroseptal mi, anteroseptal myocardial infarction, inferior mi, lateral stemi, nstemi, st segment elevation mi, st segment elevation myocardial infarction, non-st segment elevation myocardial infarction, non-st segment elevation mi, non st segment elevation myocardial infarction, non st segment elevation mi, history of myocardial infarction, cardiac arrest, status post inferior wall mi, non-q wave myocardial infarction, non q wave myocardial infarction , nqwmi, non q wave mi, non-q w mi, stemi, postoperative mi, inferior myocardial infarction, ant semi, acute mi, prior inferior myocardial infarction, prior anterolateral  myocardial infarction, inferior stemi, acute myocardial infarction, status post myocardial infarction, non-st  elevation myocardial infarction, non-st elevation myocardial infarction, non-q-wave myocardial infarction, non-q wave mi, anteroseptal mi, small non-st elevation myocardial infarction, status post an mi, st elevation mi, non-st elevation mi, posterolateral mi, posterior wall mi, cardiac ischemia, ischemic cardiomyopathy, myocardial ischemia, asmi, imi;
+
+defSpanType cadstent =~ trie rca stent, aterial stent, taxus stent, cypher stent, cardiac stent, drug-eluting stent, right coronary stent; 
+
+defDict cadsex = male, female, f, m, man, woman, gentleman, patient;
+
+defSpanType cadpmh =~ trie past medical history, pmh, pmhx;
+
+defDict verbs = showed, demonstrated, revealed, displayed, presented, showing, demonstrating, revealing, displaying, presenting;
+
+defDict verbs2 = done, performed;
+
+defDict cadproblems = problems, morbidities, problem, morbidity;
+
+defSpanType surgery =~ trie angioplasty, poba, 3-vessel coronary artery bypass surgery, off-pump double bypass, coronary artery bypass, coronary artery bypass graft,percutaneous transluminal coronary angioplasty, ptca, percutaneous transluminal coronary angioplasty, percutaneous coronary intervention, pci, off pump double bypass, coronary artery bypass surgery, coronary artery bypass graft surgery, heart bypass, bypass surgery,status post bypass surgery, post coronary artery bypass surgery, 2-vessel coronary artery bypass surgery, 3 vessel coronary artery bypass surgery, 2 vessel coronary artery bypass surgery, status post multiple angioplasties, two-vessel coronary artery bypass surgery, 3 vessel coronary artery bypass surgery, two vessel coronary artery bypass surgery, three vessel coronary artery bypass surgery, two-vessel coronary bypass grafting, three-vessel coronary bypass grafting, two vessel coronary bypass grafting, 2-vessel coronary bypass grafting, 2 vessel coronary bypass grafting, 3 vessel coronary bypass grafting, 3-vessel coronary bypass grafting, three vessel coronary bypass grafting, plain old balloon angioplasty, coronary artery bypass grafting, bypass surgery, cardiac bypass graft surgery, cardiac bypass graft surgery, quadruple bypass, status post coronary artery bypass graft, coronary artery bypass, 3-vessel bypass, three-vessel bypass, three-vessel bypass grafting, status post coronary artery bypass surgery, bypass 5 vessel, multi-vessel coronary bypass graft, coronary bypass, cardiac bypass, rca angioplasty, percutaneous coronary intervention, coronary bypass procedure, multi-lesion ptca, coronary artery bypass grafting, cabg, two vessel cabg, 2 vessel cabg, 2-v cabg off pump, multivessel bypass surgery; 
+
+defSpanType cadtest =~ trie stress test, stress mibi, thallium stress, exercise tolerance test, mibi;
+
+defSpanType cadfactors =~ trie risk factors, diagnosis, diagnoses, conditions, complications;
+
+defSpanType cadhistory =:
+... [eq('w') eq('/') eq('pmhx') eq('of')] ... ||
+... [eq('w') eq('/') eq('pmhx') eq('for')] ... ||
+... [eq('w') eq('/') eq('pmh') eq('of')] ... ||
+... [eq('w') eq('/') eq('pmh') eq('for')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('history') eq('of')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('history') eq('for')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('hx') eq('of')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('h') eq('of')] ... ||
+... [eq('pmhx') eq('of')] ... ||
+... [eq('pmhx') eq('for')] ... ||
+... [eq('pmh') eq('of')] ... ||
+... [eq('pmh') eq('for')] ... ||
+... [eq('medical')? eq('history') eq('of')] ... ||
+... [eq('medical')? eq('h') eq('.') eq('o')] ... ||
+... [eq('medical')? eq('h') eq('/') eq('o')] ... ||
+... [eq('medical')? eq('history') ]... ||
+... [eq('medical')? eq('hx') ]... ||
+... [eq('medical')? eq('hx') eq('of')]...;
+
+defSpanType cadyears =:
+... [eq('years') eq('of')] ... ||
+... [eq('yo')]...; 
+
+defSpanType cadfollow =:
+... [eq('follow') eq('-') eq('up') eq('of')]...||
+... [eq('follow') eq('-') eq('up') eq('for')]...||
+... [eq('follow') eq('up') eq('of')]...||
+... [eq('follow') eq('up') eq('for')]...||
+... [eq('f') eq('/') eq('u') eq('for')]...||
+... [eq('f') eq('/') eq('u') eq('of')]...||
+... [eq('followed') any{0,3} eq('for')]...;
+
+defSpanType event =:
+/// new rules that will be used in the second run
+//... [eq('ptca') eq('of') eq('lad') eq('and') eq('stent') eq('placed')] ... ||
+//... [eq('tiny') eq('mi') eq(',') eq('stent') eq('placement')] ... ||
+//... [eq('ptca') eq('and') eq('stent') eq('of') eq('lad')] ... ||
+//... [eq('patient') eq('is') eq('status') eq('post') eq('stent')] ... ||
+//... [eq('reason') eq('for') eq('sdu') eq('admit') eq(':') @cadmi] ... ||
+//... [a(cadsex) eq('with') eq('(') eq('crf') eq(':') eq('former') eq('smoker') eq(',') eq('htn') eq(')') eq('presents') eq('with') @cadmi] ... ||
+//... [eq('following') re('(his|her)') any{0,1} @surgery] ... ||
+//... [re('[0-9]+') eq('yo') a(cadsex) eq('p') eq('/') eq('w') @cadmi] ... ||
+//... eq('problems') eq(',') eq('notably') @cadmanycvd? @caddiseases eq(',')? [eq('s') eq('/') eq('p') eq('rca')] ... ||
+//... [eq('diagnosis') eq(':') @cadcvd eq('with') @cadmi ] ... ||
+//... [@cadpmh eq('notable') eq('for') [@cadmi] ... ||
+//... re('[0-9]') eq('vessel') @caddiseases eq('with') [eq('ptca') eq('and') eq('stent')]... ||
+//... [eq('complicated') eq('by') eq('a') eq('intraoperative') @cadmi eq('with') eq('a') eq('peak')] ... ||
+//... [eq('preop') eq('cardiac') eq('status') @cadmi eq(':')] ... ||
+///
+... @caddiseases [eq('stent') eq('placement')] ... ||//**************
+... [eq('following') re('(his|her)') any{0,1} @cadmi]...||//**************
+... re('(she|he)') eq('was') [eq('stented')] ...||//**************
+... re('(she|he)') eq('is') any{0,1} [eq('s') eq('/') eq('p') @cadstent ] ... ||//**************
+... re('(she|he)') eq('is') any{0,1} [eq('s') eq('/') eq('p') eq('stent') ] ... ||//**************
+... [eq('positive') eq('for') @cadmi] ...||//**************
+... [eq('found') eq('to') eq('have') @cadmi] ... ||//**************
+... [eq('ruled') eq('in') eq('for') any{0,1} @cadmi] ...||//**************
+... [eq('cardiac') eq('presentation') a(cadstuff) @cadmi] ... || //**************
+... a(cadbe) eq('evidence') eq('of') any{0,1} [@cadmi] ... ||
+... [a(cadbe) eq('cypher') eq('stented')] ... ||
+... a(cadproblems) a(cadstuff)? [@cadmi] ... ||
+... a(cadproblems) a(cadstuff)? @cadmanycvd [@cadmi] ... ||
+... eq('recovered') eq('from') re('(his|her)') [@surgery] ... ||
+... !a(cadnegated) @cadhistory [@cadmi] ... ||
+... [@cadfollow @cadmi] ...||
+... [eq('suffering') eq('a') @cadmi ] ...||
+... !a(cadrelative) !a(cadrelative) !a(cadrelative) !a(cadrelative) !a(cadrelative) !a(cadrelative) !a(cadrelative) !a(cadrelative) [re('(has|had)') any{0,1} @cadmi] !a(cadrelative) !a(cadrelative) !a(cadrelative) !a(cadrelative) !a(cadrelative) !a(cadrelative)... ||
+... [eq('cabg') eq('x')] ... ||
+... [eq('coronary') eq('angiogram') eq('with') eq('placement')] ...||
+... [@cadstent a(cadbe)? eq('placed')] ...||
+... [@cadpmh a(cadstuff)? @cadmanycvd eq('cabg')] ...||
+... [@cadpmh any{0,5} @cadmi] ...|| //**************
+... [@cadpmh any{0,5} @cadmanycvd? @surgery] ...||//**************
+... [@cadpmh a(cadstuff) @cadmanycvd? @caddiseases @cadmanycvd? eq(',')? @cadstent] ... ||//**************
+... [re('[0-9]') eq('.') @cadmi] ... ||
+... [re('(his|her)') @surgery] ... ||
+... [eq('lesion') a(cadbe) eq('stented')] ...||
+... [@cadmi eq('in') eq('the') any eq('zone') ] ... ||
+... re('(underwent|undergone|undergo)')  any{0,1} [@surgery] ... ||
+... [eq('s') eq('/') eq('p') eq('stent')] eq('for') @caddiseases ... ||//**************
+... [eq('s') eq('/') eq('p') eq('ant') eq('semi') eq('+') @cadstent]...||
+... [eq('s') eq('/') eq('p') @cadmi]...||
+... [eq('s') eq('/') eq('p') any{0,1} eq('cabg')]...||
+... [eq('s') eq('/') eq('p') eq('lad') eq('stenting')]...||
+... [eq('s') eq('/') eq('p') @surgery]...||
+... [@surgery eq('w') eq('/') @surgery] ...||
+... [@surgery eq('/') @cadstent] ...||
+... [@surgery eq('and') eq('stenting') eq('of')]...||
+... [@surgery a(cadstuff)] ... ||
+... [@cadhistory @cadmanycvd @cadmi] ... ||
+... [@cadhistory any{0,1} eq('cabg')] ... ||
+... [@cadhistory @cadstent] ...||
+... [@cadhistory a(cadstuff)? @cadmanycvd eq('cabg')] ... ||
+... eq('procedures') [@surgery ] ... ||
+
+... eq('followup') eq('of') any{0,1} @caddiseases eq('and')? [@cadmi] ... || // these ten rules should be included in a third run
+... [eq('followup') @caddiseases eq('and')? @cadmi] ... || ///these should be submitted for a different run
+... [eq('psh') a(cadstuff) re('[0-9]+') eq('x') eq('stent') eq('change') eq(',') @surgery] ... ||///these should be submitted for a different run
+... [re('[0-9]+') eq('.') @cadmi] ... ||///these should be submitted for a different run
+... [@cadmi a(cadstuff)] ... ||///these should be submitted for a different run
+... [@caddiseases eq(',') @surgery]...||///these should be submitted for a different run
+... [eq('s') eq('/') eq('p') @cadstent] ... ||///these should be submitted for a different run
+... eq('procedures') [@surgery] ... ||///these should be submitted for a different run
+... [eq('had') any @cadmi] ... ||///these should be submitted for a different run
+... [eq('had') any{0,1} @cadstent] ... ;///these should be submitted for a different run
+
+defSpanType test =:
+// these are uber specific rules that will be used in the second run.
+//... [eq('lad') eq(':') re('[0-9]+') eq('%') eq('stenosis') eq('after') eq('\'') eq('huge')] ... ||
+//... [eq('patient') eq('had') eq('an') any eq('stress') eq('test')]...||
+//... [eq('cath') eq('revealing') eq('lm')] ... ||
+//... [eq('transferred') eq('to') any{0,3} eq('for') eq('cardiac') eq('catheterization')] ... ||
+//
+... [eq('troponin') any{1,3} re('[0-9]')eq('.')re('[0-9]')] ... ||
+... [eq('troponin') eq('-')? eq('i') a(cadstuff)? any{0,2} re('[1][0-9]')] ... ||
+... [eq('troponin') eq('-')? eq('t') a(cadstuff)? any{0,2} re('[0][0-9]')] ... ||
+... [eq('trop') eq('-')? eq('t') a(cadstuff)? any{0,2} re('[0-9]')eq('.')re('[0-9]')] ... ||
+... [eq('trop') eq('-')? eq('i') a(cadstuff)? any{0,2} re('[1][0]')eq('-')? re('[1-9]')eq('.')re('[0-9]')] ... ||
+... [eq('tni') a(cadbe) re('[3-9]') eq('.') re('[0-9]')] ... ||
+... [eq('cath') a(verbs)] ... ||
+... [eq('cath') eq('in') re('[0-9]+') eq('/') re('[0-9]+') ]... ||
+... [eq('cath') eq('that') a(verbs)] ... ||
+... [eq('cath') any{0,5} eq('which') a(verbs)] ... ||
+... [eq('cath') eq('(')? re('[0-9]+') eq('/') re('[0-9]+') eq(')')?] ... ||
+... [eq('subsequent')? eq('cath') re('[0-9]+') eq('/') re('[0-9]+') eq('/') re('[0-9]+') a(verbs) ] ... ||
+... [@cadcatheter re('[0-9]+') eq('/') re('[0-9]+') ]... ||
+... [@cadcatheter any{0,2} a(verbs)] ... ||
+... [@cadcatheter a(cadbe)] ... ||
+... [eq('angiography') a(verbs)] ... ||//**************
+... re('(underwent|undergone|undergo)')  any{0,2} [@cadcatheter]...||//**************
+... [eq('stress')eq('test') a(cadbe) any{0,1} a(verbs2)] ... ||
+... [eq('stress')eq('mibi') any{0,5} a(verbs)] ... ||
+... [eq('stress') eq('(') re('[0-9]+') eq('/') re('[0-9]+') eq(')')] ... ||
+... [eq('thallium')eq('stress') any{0,5} a(verbs)] ... ||
+... [ eq('on') eq('exercise') eq('tolerance') eq('test')]...||
+... eq('had') eq('an') [eq('exercise') eq('tolerance') eq('test')]...||//**************
+... [re('(his|her)') eq('stress') eq('test') any{0,4} a(cadbe) eq('positive')] ... ||//**************
+... [eq('for') eq('a') eq('positive') eq('stress') eq('test')] ... ||//**************
+... [eq('stress') eq('test') a(verbs2)] ... ||
+... [eq('occlusion') eq('of') re('(his|her)') eq('om')] ...||
+
+... [@cadtest a(cadbe) any{0,1} a(verbs2)] ... || // submitted in the third run
+... [@cadtest any{0,5} a(verbs)] ... ||
+... [eq('stress') eq('(') re('[0-9]+') eq('/') re('[0-9]+') eq(')')] ... ||
+... [ eq('on') @cadtest]...||
+... eq('had') eq('an') [@cadtest]...||//**************
+... [re('(his|her)') @cadtest any{0,4} a(cadbe) eq('positive')] ... ||//**************have these into a different run
+... [eq('for') eq('a') eq('positive') @cadtest] ... ||//**************
+... [eq('occlusion') eq('of') re('(his|her)')? eq('om')] ...||//**************
+... [@cadtest any{0,1} a(cadbe)] ... ;
+
+defSpanType cad =:
+// rules that are very specific and will be used for the second run
+//... [re('[0-9]') eq('.') eq('cv') a(cadstuff) @cadmanycvd? @caddiseases] ... ||
+//... [@caddiseases eq('/') eq('ischemia') eq(':')] ... ||
+//... [eq('problems') eq(',') eq('notably') @cadmanycvd? @caddiseases] ... ||
+//... [@cadpmh eq('notable') eq('for') @cadmi eq(',')? @caddiseases ] ... ||
+//... [re('[0-9]') eq('vessel') @caddiseases] eq('with') eq('ptca') eq('and') ... ||
+//... [eq('results') eq('were') eq('significant') eq('for') any{0,1} @caddiseases] ... ||
+//
+... eq('systems') a(cadbe) any{0,2} @cadmanycvd [@caddiseases]... ||
+... eq('systems') a(cadbe) any{0,2} [@caddiseases]... ||
+... eq('positive') eq('for') [@caddiseases]...||
+... eq('r')eq('/')eq('t') [@caddiseases] ... ||
+... re('(has|had)') @cadhistory [@caddiseases]...||
+... re('(has|had)') re('(a|an)')? any{0,1} [@caddiseases] re('(history|hx)') ... ||
+... [re('(he|she)') eq('has') @caddiseases ] ... ||//**************
+... re('(her|his)') re('(problem|problems)') re('(for|of)') [@caddiseases] ...||
+... @cadfollow any{0,1} [@caddiseases] ... ||
+... @cadfollow @cadmanycvd [@caddiseases] ... || 
+... !a(cadrelative) re('(has|had)') eq('poorly')? eq('controlled')? @cadmanycvd? [@caddiseases]...||
+... !a(cadrelative) re('(her|his)') [@caddiseases] a(cadbe) ...||
+... @cadyears any{0,1} @cadmanycvd? [@caddiseases] ... ||
+... @cadyears any{0,1} eq('with') @cadmanycvd? [@caddiseases] ... ||
+... @cadfactors re('(include|including)') a(cadstuff)? @cadmanycvd? [@caddiseases] ... ||
+... @cadfactors a(cadstuff) @cadmanycvd? [@caddiseases] ... ||//**************
+... a(cadsex) re('(with|w)') any{0,2} @cadhistory [@caddiseases]  ... ||
+... a(cadsex) re('(with|w)') @cadhistory? @cadmanycvd? [@caddiseases] ... ||
+... a(cadsex) re('(with|w)') !eq('no') @cadhistory? @cadmanycvd? [@caddiseases] ... ||
+... a(cadsex) @cadhistory @cadmanycvd? [@caddiseases] ...||
+... a(cadsex) any{0,3} eq('with') any{0,1} @cadmanycvd? [@caddiseases] ... ||
+... a(cadsex) re('(with|w)') eq('mmp') any @cadmanycvd? [@caddiseases]...||
+... eq('cc') eq(':')? eq('fu') @cadmanycvd? [@caddiseases] ... ||
+... a(cadproblems) any{13} [@caddiseases] ... ||
+... a(cadproblems) a(cadstuff)? [@caddiseases] ... ||
+... a(cadproblems) eq('#') re('[0-9]') any{0,1} [@caddiseases] ... ||
+... a(cadproblems) a(cadstuff)? @cadmabycvd? [@caddiseases] ... || 
+... a(cadproblems) a(cadstuff)? eq(',')? re('(include|including)') a(cadstuff)? @cadmabycvd? [@caddiseases] ... ||
+... @cadhistory  @cadmanycvd? [@caddiseases] ... ||
+... @cadpmh any{0,2} @cadmi? [@caddiseases] ... ||//**************
+... @cadpmh eq('/')? eq('psh')? any{0,3} @cadmanycvd? [@caddiseases] ... ||
+... @cadpmh eq('/')? eq('psh')? a(cadstuff)? [@caddiseases] ... ||
+... @cadpmh eq('/')? eq('psh')? a(cadstuff)? any{29} [@caddiseases] ... ||
+... @cadpmh a(cadstuff)? [@caddiseases] ... ||
+... @cadpmh any{0,4} re('(of|for)') @cadmanycvd? [@caddiseases] ... ||
+... eq('#') re('[0-9]') eq('.')? eq(')')? [@caddiseases] ... || 
+... eq('#') eq(')')? [@caddiseases] ... ||
+... re('[0-9]') eq(')') [@caddiseases] ... ||
+... re('[0-9]') eq('.') [@caddiseases] ... ||
+... !eq('no') @cadhistory  @cadmanycvd? [@caddiseases] ... ||
+... [eq('s') eq('/') eq('p') eq('stent') eq('for') @caddiseases] ... ||//**************
+... re('(management|evaluation)') re('(of|for)') @cadmanycvd? [@caddiseases] ... ||
+... @cadcvd a(cadstuff) any{0,6} [@caddiseases] ...||
+... @cadcvd [@caddiseases] ...||
+... [@caddiseases] eq('on') @cadmedications... ||
+... [@caddiseases] eq('continues') eq('on') @cadmedications... ||
+... [@caddiseases] @cadcvd...||
+... [@caddiseases] a(cadstuff) ...||
+
+... [eq('does') eq('have') @caddiseases] ... ||///these should be submitted for a third run
+... eq('found') eq('to') eq('have') @cadmanycvd? [@caddiseases]...||///these should be submitted for a different run
+... eq('followup') eq('of') any{0,1} [@caddiseases] ... ;///these should be submitted for a different run
+
+
+defSpanType symptom =:
+// rules that are very specific and will be used for the second run
+//... [eq('developed') re('[0-9]') eq('/') re('[0-9]') eq('pain') eq('across') re('(his|her)') eq('anterior') eq('chest') ] ... ||
+//... [re('[0-9]+') eq('yo') eq('s') eq('/') eq('p') eq('admit') eq('for') @cadsymptom]...||
+//... [  re('(he|she)') eq('continues') eq('to') eq('have') @cadsymptom] ...||
+//... [eq('hyperlipidemia') eq('with') eq('increasing') eq('frequency') eq('of') @cadsymptom] ... ||
+//
+... re('(his|her)') [@cadsymptom] ...|| ///these should be submitted for a third run
+... eq('represented') eq('with') [@cadsymptom] ... ||///these should be submitted for a different run
+... eq('evaluation') eq('of') [@cadsymptom] ... ||///these should be submitted for a different run
+
+... [eq('cc') eq(':') @cadsymptom] ... ||
+... [eq('evaluation') eq('for') @cadsymptom] ... ||
+... [eq('developed') @cadsymptom] ... ||
+... eq('for') any{0,1} eq('evaluation') eq('of') [@cadsymptom] ... ||
+... re('(because|due)') re('(of|to)') any{0,1} @cadothersymptoms? eq('and')? [@cadsymptom] ... ||
+... eq('given') re('(his|her)') [@cadsymptom] ... ||
+... !a(cadnegated) !a(cadnegated) !a(cadnegated) @cadhistory [@cadsymptom] ... ||
+... a(cadsex) any{0,3} re('(with|w)') @cadmanycvd? [@cadsymptom] ...||
+... eq('admitted') eq('for') any{0,4} [@cadsymptom]...||
+... re('[0-9]+') eq('.') [@cadsymptom] ...||
+... re('[0-9]+') eq(':') [@cadsymptom] ...||
+... re('(has|had)') !a(cadnegated) !a(cadnegated) !a(cadnegated) !a(cadnegated) [@cadsymptom] ... ||
+... re('(has|had)') [@cadsymptom] ...||//
+... !eq('no') eq('diagnosis') eq('of') a(cadstuff)? [@cadsymptom] ... ||
+... eq('assessment') eq('/') eq('plan') a(cadstuff)? [@cadsymptom] ... ||
+... re('(experiences|experienced)') any{0,2} [@cadsymptom] ... ||
+... re('(appeared|appears|seems|seemed)') eq('to') eq('have') [@cadsymptom] ... ;

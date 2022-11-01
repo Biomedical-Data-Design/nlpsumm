@@ -1,0 +1,414 @@
+// this is for the medications
+
+provide 'medication';
+
+
+defSpanType medicationAffix =: 
+... [ re('glitazone$') ] ... ||
+... [ re('thienopyridine$') ] ... ||
+... [ re('antiplatelet$') ] ... ||
+... [ re('nitrate$') ] ... ||
+... [ re('sulfonylurea$') ] ... ||
+... [ re('(ace)(\s+)(inhibitor$)') ] ... ||
+... [ re('(angiotensin)(\s+)(converting)(\s+)(enzyme)(\s+)(inhibitor$)') ] ... ||
+... [ re('niacin$') ] ... ||
+... [ re('fibrate$') ] ... ||
+... [ re('ezetimibes$') ] ... ||
+... [ re('thiazolidinedione$') ] ... ||
+... [ re('gliflozin$') ] ... ||
+... [ re('biguanide$') ] ... ||
+... [ re('(amylin)(\s+)(analogue$)') ] ... ||
+... [ re('(oral)(\s+)(hypoglycemic$)') ] ... ||
+... [ re('(sglt2)(\s+)(inhibitor$)') ] ... ||
+... [ re('(prandial)(\s+)(glucose)(\s+)(regulator$)') ] ... ||
+... [ re('(increin)(\s+)(mimetics)(\s+)(glp)(\s+)([1])(\s+)(agonist$)') ] ... ||
+... [ re('(dpp)(\s+|-)([4])(\s+)(inhibitor$)') ] ... ||
+... [ re('(d)(\s+|-)(phenylalanine)(\s+)(derivative$)') ] ... ||
+... [ re('(bile)(\s+)(acid)(\s+)(sequestrants$)') ] ... ||
+... [ re('(alpha)(\s+)(glucosidase)(\s+)(inhibitor$)') ] ... ||
+... [ re('glinide$') ] ... ||
+//... [ re('meglitinide$') ] ... ||
+... [ re('gliptin$') ] ... ||
+... [ re('olol$') ] ... ||
+... [ re('sartan$') ] ... ||
+... [ re('statin$') ] ... ||
+... [ re('^sulph') ] ... ||
+... [ re('^sulfa') ] ... ||
+... [ re('thiazide$') ] ... ;
+
+defSpanType medicationDictionaryName =: 
+... [ @medicationAffix ] ... ||
+//gliptins - dpp4 inhibitors
+... [ eqi('januvia') ] ... ||
+... [ eqi('galvus') ] ... ||
+... [ eqi('onglyza') ] ... ||
+... [ eqi('trajenta') ] ... ||
+... [ eqi('vipidia') ] ... ||
+... [ eqi('jentadueto') ] ... ||
+... [ eqi('vipdomet') ] ... ||
+... [ eqi('janumet') ] ... ||
+... [ eqi('eucreas') ] ... ||
+//sulphonylureas
+... [ eqi('daonil') ] ... ||
+... [ eqi('amaryl') ] ... ||
+... [ eqi('glimepiride') ] ... ||
+... [ eqi('glibenclamide') ] ... ||
+... [ eqi('diamicron') ] ... ||
+... [ eqi('gliclazide') ] ... ||
+... [ eqi('glipizide') ] ... ||
+... [ eqi('micronase') ] ... ||
+... [ eqi('micronaise') ] ... ||//************
+... [ eqi('minodiab') ] ... ||
+... [ eqi('glucotrol') ] ... ||
+... [ eqi('glibenese') ] ... ||
+... [ eqi('tolbutamide') ] ... ||
+... [ eqi('glyburide') ] ... ||
+... [ eqi('chloropropamide') ] ... ||
+... [ eqi('glyburide') ] ... ||
+... [ eqi('tolazamide') ] ... ||
+... [ eqi('diabeta') ] ... ||
+... [ eqi('diabinese') ] ... ||
+... [ eqi('glynase') eq('prestab') ] ... ||
+//thiazolidinediones
+... [ eqi('pioglitazone') ] ... ||
+... [ eqi('actos') ] ... ||
+... [ eqi('avandia') ] ... ||
+... [ eqi('avapro') ] ... ||
+... [ eqi('tzds') ] ... ||
+//glp1-agonists
+//... [ eqi('victoza') ] ... ||
+//... [ eqi('liraglutide') ] ... ||
+//... [ eqi('byetta') ] ... ||
+//... [ eqi('exenatide') ] ... ||
+//... [ eqi('bydureon') ] ... ||
+//... [ eqi('lixisenatide') ] ... ||
+//... [ eqi('albiglutide') ] ... ||
+//... [ eqi('dulaglutide') ] ... ||
+//... [ eqi('lyxumia') ] ... ||
+//... [ eqi('eperzan') ] ... ||
+//metformin
+... [ eq('metformin') eq('ir')] ... ||
+... [ eq('metformin') eq('sr')] ... ||
+... [ eq('metformin') eq('liquid')] ... ||
+... [ eq('metformin') ] ... ||
+... [ eq('glucophage') ] ... ||
+... [ eq('netformin') ] ... ||
+... [ eq('metforman') ] ... ||
+//amylin analogues
+... [ eq('amylin') ] ... ||
+... [ eq('pramlintide') eq('acetate')] ... ||
+... [ eqi('symlin') ] ... ||
+//meglitinides
+//... [ eqi('nateglinide') ] ... ||
+//... [ eqi('repaglinide') ] ... ||
+//... [ eqi('starlix') ] ... ||
+//... [ eqi('prandin') ] ... ||
+// anti diabetics
+... [ eqi('acarbose') ] ... ||
+... [ eqi('actoplus') eqi('met') ] ... ||
+... [ eqi('colesevelam') ] ... ||
+... [ eqi('diabeta') ] ... ||
+... [ eqi('deamelin') ] ... ||
+... [ eqi('duetact') ] ... ||
+... [ eqi('forxiga') ] ... ||
+... [ eqi('fortamet') ] ... ||
+... [ eqi('gliquidone') ] ... ||
+... [ eqi('glurenorm') ] ... ||
+... [ eqi('glynase') ] ... ||
+... [ eqi('glucovance') ] ... ||
+... [ eqi('glumetza') ] ... ||
+... [ eqi('glyclopyramide') ] ... ||
+... [ eqi('glucobay') ] ... ||
+... [ eqi('glyset') ] ... ||
+... [ eqi('invokana') ] ... ||
+... [ eqi('kombiglyze') ] ... ||
+... [ eqi('micronised') eqi('glyburide') ] ... ||
+... [ eqi('metaglip') ] ... ||
+... [ eqi('liquid') eqi('metformin')] ... ||
+... [ eqi('miglitol') ] ... ||
+... [ eqi('prandimet') ] ... ||
+... [ eqi('precose') ] ... ||
+... [ eqi('riomet')] ... ||
+... [ eqi('welchol') ] ... ||
+// insulin
+... [ eqi('aspartate') eqi('insulin') ] ... ||
+... [ eqi('insulin') ] ... ||
+... [eq('nph')] ... || //************
+... [ eqi('novolog') ] ... ||
+... [ eqi('novolin') ] ... ||
+... [ eqi('humanlog') ] ... ||
+... [ eqi('lispro') ] ... ||
+... [ eqi('aspart') ] ... ||
+... [ eqi('apidra') ] ... ||
+... [ eqi('glulisine') ] ... ||
+... [ eqi('velosulin') ] ... ||
+... [ eqi('humulin') ] ... ||
+... [ eqi('lantus') ] ... ||
+... [ eqi('lantus') eq('solostar') ] ... ||
+... [ eqi('solostar') ] ... ||
+... [ eqi('nph') eqi('insulin') ] ... ||
+... [ eqi('insulin') eqi('nph') ] ... ||
+... [ eqi('regular') eq('insulin')] ... ||
+... [ eqi('lantus') eq('insulin') eq('glurgive')] ... ||
+//beta blockers
+... [ eqi('b') eqi('-') eqi('blocker') ] ... ||
+... [ eqi('b') eqi('-') eqi('blockers') ] ... ||
+... [ eqi('beta') eqi('-') eqi('blocker') ] ... ||
+... [ eqi('beta') eqi('-') eqi('blockers') ] ... ||
+... [ eqi('beta') eqi('blocker') ] ... ||
+... [ eqi('beta') eqi('blockers') ] ... ||
+... [ eqi('beta') eqi('blockade') ] ... ||
+... [ eqi('metoprolol') eq('tartate')? ] ... ||
+... [ eqi('toprol') ] ... ||
+... [ eqi('sotalol') ] ... ||
+... [ eqi('medstoprol') ] ... ||
+... [ eqi('coreg') ] ... ||
+... [ eqi('lopressor') ] ... ||
+... [ eqi('zabeta') ] ... ||
+... [ eqi('carvedilol') ] ... ||
+... [ eqi('labetalol') ] ... ||
+... [ eqi('sectral') ] ... ||
+... [ eqi('tenormin') ] ... ||
+... [ eqi('trandate') ] ... ||
+... [ eqi('corgard') ] ... ||
+... [ eqi('bystolic') ] ... ||
+... [ eqi('levatol') ] ... ||
+... [ eqi('inderal') ] ... ||
+
+//niacins
+... [ eqi('niaspan') ] ... ||
+... [ eq('nicolar')] ... ||
+//ezetimides
+... [ eqi('zetia') ] ... ||
+//statins
+... [ eq('lipitor') ] ... ||
+... [ eq('zocor') ] ... ||
+... [ eq('mevacor') ] ... ||
+... [ eq('pravachol') ] ... ||
+... [ eq('crestor') ] ... ||
+... [ eq('torvast') ] ... ||
+... [ eq('lipobay') ] ... ||
+... [ eq('baycol') ] ... ||
+... [ eq('lescol') ] ... ||
+... [ eq('altocor') ] ... ||
+... [ eq('altoprev') ] ... ||
+... [ eq('compactin') ] ... ||
+... [ eq('livalo') ] ... ||
+... [ eq('pitava') ] ... ||
+... [ eq('selektine') ] ... ||
+... [ eq('lipostat') ] ... ||
+... [ eq('lipex') ] ... ||
+... [ eq('vytorin') ] ... ||
+... [ eq('advicor') ] ... ||
+... [ eq('caduet') ] ... ||
+... [ eq('simcor') ] ... ||
+//obesity
+//... [ eq('orlistat') ] ... ||
+//... [ eq('xenical') ] ... ||
+//... [ eq('alli') ] ... ||
+//... [ eq('lorqess') ] ... ||
+//... [ eq('lorcaserin') ] ... ||
+//... [ eq('belviq') ] ... ||
+//... [ eq('qsymia') ] ... ||
+//... [ eq('phentermine') eq('-') eq('topiramate') ] ... ||
+//aspirin
+... [ eq('acetylsalicylic') eq('acid')] ... ||
+... [ eq('buffered') eq('aspirin')] ... ||
+... [ eq('enteric') eq('coated') eq('aspirin')] ... ||
+... [ eq('aspirin') eqi('enteric') eq('coated')] ... ||
+... [ eq('ecasa') ] ... ||
+... [ eq('asa') ] ... ||
+... [ eq('aspirin') ] ... ||
+... [ eq('asa') eqi('enteric') eqi('coated') ] ... ||
+... [ eq('baby') eqi('aspirin') ] ... ||
+//nitrates
+... [ eq('nitro') ] ... ||
+... [ eq('ismo') ] ... ||
+... [ eq('isosorbide') eq('dinitrate') ] ... ||
+... [ eq('dilatrate') ] ... ||
+... [ eq('isordil') ] ... ||
+... [ eq('nitrostat') ] ... ||
+... [ eq('nitroglycerin') ] ... ||
+... [ eq('ntg') ] ... ||
+... [ eq('tng') ] ... ||
+... [ eq('isosorbide') ] ... ||///************
+... [ eq('nitropaste') ] ... ||///************
+... [ eq('sltng') ] ... ||///************
+... [ eq('isdn') ] ... ||///************
+... [ eq('nitropatch') ] ... ||///************
+... [ eq('imdur') ] ... ||
+... [ eq('ranexa') ] ... ||
+... [ eq('isosorbide') eq('mononitrate')] ... ||
+//thienopyridines
+... [ eqi('prasugrel') ] ... ||
+... [ eqi('plavix') ] ... ||
+... [ eqi('clopidogrel') ] ... ||
+... [ eqi('clopidogrel') eq('bisulfate')] ... ||
+... [ eqi('ticlid') ] ... ||
+... [ eqi('triclopidine') ] ... ||
+//fibrates
+... [ eqi('tricor') ] ... ||
+... [ eqi('fenofibrate') ] ... ||
+... [ eqi('fibricor') ] ... ||
+... [ eqi('lopid') ] ... ||
+... [ eqi('gemfibrozil') ] ... ||
+//ace inhibitors
+... [ eqi('ace') eqi('inhibitor') ] ... ||
+... [ eqi('zestril') ] ... ||
+... [ eqi('captopril') ] ... ||
+... [ eqi('captoril') ] ... || //********************
+... [ eqi('capoten') ] ... ||
+... [ eqi('lisinopril') ] ... ||
+... [ eqi('lisinoprill') ] ... || //********************
+... [ eqi('lisinorpill') ] ... || //********************
+... [ eqi('prinivil') ] ... ||
+... [ eqi('ramipril') ] ... ||
+... [ eqi('ecotrin') ] ... ||
+... [ eqi('vasotec') ] ... ||
+... [ eqi('benazepril') ] ... ||
+... [ eqi('votensin') ] ... ||
+... [ eqi('enalapril') ] ... ||
+... [ eqi('quinapril') ] ... ||
+... [ eqi('trandolapril') ] ... ||
+... [ eqi('fosinopril') ] ... ||
+... [ eqi('monopril') ] ... ||
+... [ eqi('zestoretic') ] ... ||
+... [ eqi('vaseretic') ] ... ||
+... [ eqi('perindopril') ] ... ||
+... [ eqi('aceon') ] ... ||
+... [ eqi('accupril') ] ... ||
+... [ eqi('mavik') ] ... ||
+... [ eqi('lotensin') ] ... ||
+... [ eqi('altace') ] ... ||
+... [ eqi('altase') ] ... || //********************
+... [ eqi('univasc') ] ... ||
+... [ eqi('moexipril') ] ... ||
+//arbs
+... [ eqi('valsartan') ] ... ||
+... [ eqi('eprosartan') ] ... ||
+... [ eqi('irbesartan') ] ... ||
+... [ eqi('iosartan') ] ... ||
+... [ eqi('olmesartan') ] ... ||
+... [ eqi('telmisartan') ] ... ||
+... [ eqi('candesartan') ] ... ||
+... [ eqi('cozaar') ] ... ||
+... [ eqi('diovan') ] ... ||
+... [ eqi('atacand') ] ... ||
+... [ eqi('teveten') ] ... ||
+... [ eqi('benicar') ] ... ||
+... [ eqi('micardis') ] ... ||
+... [ eqi('atican') ] ... || // ******************
+//thiazide diuretics
+... [ eqi('diuretics') ] ... ||
+... [ eqi('hctz') ] ... ||
+... [ eqi('dyazide') ] ... ||
+... [ eqi('bumetanide') ] ... ||
+... [ eqi('lasix') ] ... ||
+... [ eqi('demandex') ] ... ||
+... [ eqi('furosemide') ] ... ||
+... [ eqi('torsemide') ] ... ||
+... [ eqi('metolazone') ] ... ||
+... [ eqi('zaroxolyn') ] ... ||
+... [ eqi('maxzide') ] ... ||
+... [ eqi('aldactazide') ] ... ||
+... [ eqi('aldactone') ] ... ||
+... [ eqi('clorpres') ] ... ||
+... [ eqi('tenoretic') ] ... ||
+... [ eqi('thalitone') ] ... ||
+... [ eqi('capozide') ] ... ||
+... [ eqi('hyzaar') ] ... ||
+... [ eqi('prinzide') ] ... ||
+// calcium channel blockers
+... [ eqi('procardia') ] ... ||
+... [ eqi('verapamil') ] ... ||
+... [ eqi('calan') ] ... ||
+... [ eqi('isoptin') eq('sr') ] ... ||
+... [ eqi('amlodipine') ] ... ||
+... [ eqi('nicardipine') ] ... ||
+... [ eqi('cardene') ] ... ||
+... [ eqi('amlodipine') eq('besylate')] ... ||
+... [ eqi('nifedipine') ] ... ||
+... [ eqi('nisoldipine') ] ... ||
+... [ eqi('sular') ] ... ||
+... [ eqi('norvasc') ] ... ||
+... [ eqi('diltiazem') ] ... ||
+... [ eqi('cardizem') ] ... ||
+... [ eqi('dilacor') ] ... ||
+... [ eqi('taztia') ] ... ||
+... [ eqi('tiazac') ] ... ||
+... [ eqi('syscor') ] ... ||
+... [ eqi('tarka') ] ... ||
+... [ eqi('verapress') ] ... ||
+... [ eqi('univer') ] ... ||
+... [ eqi('securon') ] ... ||
+... [ eqi('adalat') ] ... ||
+... [ eqi('coracten') ] ... ||
+... [ eqi('nifedipress') ] ... ||
+... [ eqi('tenif') ] ... ||
+... [ eqi('tensipine') ] ... ||
+... [ eqi('plendil') ] ... ||
+... [ eqi('felotens') ] ... ||
+... [ eqi('prescal') ] ... ||
+... [ eqi('motens') ] ... ||
+... [ eqi('lercanidipine') ] ... ||
+... [ eqi('lacidipine') ] ... ||
+... [ eqi('nicardipine') ] ... ||
+... [ eqi('zanidip') ] ... ||
+... [ eqi('carden') ] ... ||
+... [ eqi('plendil') ] ... ||
+... [ eqi('felotens') ] ... ||
+... [ eqi('felodipine') ] ... || //********
+... [ eqi('prescal') ] ... ||
+... [ eqi('motens') ] ... ||
+... [ eqi('triapin') ] ... ||
+... [ eqi('vascalpha') ] ... ||
+... [ eqi('almostine') ] ... ||
+... [ eqi('exforge') ] ... ||
+... [ eqi('istin') ] ... ||
+... [ eqi('calcium') eqi('channel') eqi('blocker') ] ... ;
+
+defSpanType medicationType =: 
+... [ eqi('anti-diabetic') ] ... ||
+... [ eqi('antidiabetic') ] ... ||
+... [ eqi('anti-diabetics') ] ... ||
+... [ eqi('antidiabetcis') ] ... ||
+... [ eqi('dm') ] ... ||
+... [ eqi('diabetes') ] ... ||
+... [ eqi('diabetes') eqi('mellitus') ] ... ||
+... [ eqi('cardiovascular') ] ... ||
+... [ eqi('weight') eqi('reduction') ] ... ||
+... [ eqi('blood') eqi('pressure') ] ... ||
+... [ eqi('bp') ] ... ||
+... [ eqi('cardiac') ] ... ||
+... [ eqi('dysrhythmia') ] ... ||
+... [ eqi('inotropic') ] ... ||
+... [ eqi('cardiotonic') ] ... ||
+... [ eqi('hypertensive') ] ... ;
+
+defDict release = release, releas, rel;
+
+defDict releaseAcronym = cd, cr, la, sr, tr, xl, xr, er;
+
+defDict negated = no, hold, stop, holing, not, without, off, considering, consider, non, unwillingness, allergies;
+
+defDict medstuff = :, -, .;
+
+defDict med = medication, medications, medicine, medicines, meds, drug, drugs;
+
+defDict medicationHead = inhaler, inhalers, nebulizer, nebulizers, nebs, puffer, puffers, 
+ointment, supplement, supplements, supplementation, complex, lotion, replacement, 
+sulphate, sulfate, inhibitor, inhibitors, syrup, elixir, aqua, suspension, susp,
+solution, cream, paste, powder, diskus, spray, sprays, tabs, tablet, tablets,
+cd, cr, la, sr, tr, xl, xr, er, hc, hcl, hci, otc, xt, hfa;
+
+defSpanType medication =: 
+... !a(negated) !a(negated) !a(negated) [@medicationType ai(med) ] ... ||
+... !a(negated) !a(negated) !a(negated) [@medicationDictionaryName ai(medicationHead) ] ... ||
+... !a(negated) !a(negated) !a(negated) [@medicationDictionaryName any{1,2} ai(release) ] ... ||
+... !a(negated) !a(negated) !a(negated) [@medicationDictionaryName any eqi('free') ] ... ||
+... !a(negated) !a(negated) !a(negated) [@medicationDictionaryName any{1,2} eqi('rel') eqi('.') ] ... ||
+... !a(negated) !a(negated) !a(negated) [@medicationDictionaryName eqi('-') ai(releaseAcronym) ] ... ||
+... !a(negated) !a(negated) !a(negated) [@medicationDictionaryName any eqi('/') any ] ... ||
+... !a(negated) !a(negated) !a(negated) [@medicationDictionaryName any{1,3} eqi('%') ] ... ||
+... !a(negated) !a(negated) !a(negated) [@medicationDictionaryName any eqi('strength') ] ... ||
+... !a(negated) !a(negated) !a(negated) [@medicationDictionaryName ] ... ;

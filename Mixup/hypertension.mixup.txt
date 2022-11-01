@@ -1,0 +1,151 @@
+// --- hypertension --
+
+//provide 'hbp';
+provide 'hypertension';
+
+defSpanType htnmedications =~ trie pravachol, zetia;
+
+defSpanType htndiseases =~ trie hypertension, hypertensive disorder, htn, ht, high blood pressure, pulmonary hypertension, malignant hypertension, elevated blood pressure, essential hypertension;
+
+defSpanType htncvd =~ trie coronary heart disease, hyperlipidemia, cad, coronary artery disease, heart disease, coronary disease, neuropathy, frozen shoulder, gerd, smoking, glucose intolerance with post prandial hyperglycemia, postmenopausal, cervical osteoarthritis ddd, hypovitaminosis d, obesity, central obesity, adiposity, general obesity, obese, morbid obesity, morbidly obese, microscopic hematuria with negative work up, anxiety, depression, bladder cancer, cataract, stroke, cards, palpitations, status post coronary artery bypass surgery, diabetes mellitus, aodm, diabetes mellitus type 2, diabetes mellitus type ii, diabetes mellitus type 1, diabetes mellitus type i,aodm type 2, aodm type ii, aodm type 1, aodm type i, adult onset diabetes mellitus, adult onset diabetes mellitus type 2, adult onset diabetes mellitus type ii, dmi, dmii,dm1, dm2, dmt1, dmt2, dmtii, dmti,diabetic ketoacidosis, diabetes type 1, diabetes type i, diabetes type 2, diabetes type ii, aod, adult onset diabetes, type 1 diabetes, type 2 diabetes, type i diabetes, type ii diabetes, type 1 diabetes mellitus, type 2 diabetes mellitus, type i diabetes mellitus, type ii diabetes mellitus, dka, hypersmolar hyperglycaemic state, hypoglycaemia, hyperglycaemia, non-insulin-dependent diabetes mellitus, diabetes, dm, type ii dm, type i dm, insulin-dependent diabetes, status post bypass surgery, mild dyslipidemia, coronary artery bypass surgery, hyperlipoproteinemia, hyperlipidaemia, dyslipidemia, hypercholesterolemia, hld, hl, lipids,  coronary ischemia, coronary arteriosclerosis, dyspepsia, insulin dependent diabetes mellitus, iddm, dm 2, dm 1, insulin-requiring dm, depression, insomnia, syncope, carotid stenosis, psychosis, osteoarthritis, cerebrovascular disease, recurrent utis, hlp, hypothyroidism, high cholesterol, hidradenitis, chronic venous stasis, pulmht, osa, copd, chronic venous stasis with recurrent leg ulcers, peripheral neuropathy , h/o left foot infection, erectile dysfunction, onychomycosis, diabetic retinopathy, ischemic cardiomyopathy, inferior myocardial infarction, polyp of colon, sleep apnea,  status post cholecystectomy, chronic obstructive pulmonary disease, arthritis, congestive heart failure secondary to diastolic dysfunction, congestive heart failure, renal insufficiency with baseline creatinine approximately 3, atrial fibirllation, peripheral vascular disease, colon polyps, diverticulosis adenoid hypertrophy, humeral fracture, peripheral arterial disease,aortic stenosis, venous stasis with chronic leg ulcers, chf, prior history, b-cell lymphoma, pontine stroke, basilar artery stent, herpes zoster, graft versus host disease, hyperlipidemia, hyperhomocysteinemia, pseudomonas pneuomnia, heart murmur, bph, hepatitis c, gallstones, niddm, insulin-dependent diabetes mellitus, insulin dependent diabetes mellitus, insulin-dependent dm, insulin dependent dm, atrial fibrillation, ckd, psoriasis, mental retardation, benign prostatic hypertrophy, insomnia, nephrotic syndrome, history of previous cva, status post cabg, glucose intolerance, abdominal aortic aneurysm repair, chronic pneumonia, chronic wound infection, history of chronic urinary tract infections, change in mental status, cad s/p ptca, pvd, as x/p avr, mr, interstitial lung disese, mi, non-insulin-dependent diabetes, right upper quadrant pain, dyspnea, glasses, esophageal cancer, seizure disorder, nonspecific peripheral neuropathy, spinal stenosis, pe, carotid artery stenosis, chd, hepatitis c, otalgia, bipolar disease, obsessive compulsive disorder, cardiac risk factors of dm, sp oral cancer, status post imi, afib, cabg, ppm, recent stent,kidney stones, autonomic insufficiency, polyneuropathy, nstemi, diffuse cad, left pleural mass followed by fidious, copd, cardiac stent, non-insulin dependent diabetes, breast cancer, breast ca, asthma, osteoporosis, orally controlled diabetes, atrial flutter, edema, type 2 dm, osa with cpap, cardiac myopathy, peripheral vascular disease, insulin dependent diabetes, elevated cholesterol, metastatic renal cell cancer,  s/p l nephrectomy, t1 radiation right kidney ca, status post imi, afib, cabg, ppm, recent stent,kidney stones, autonomic insufficiency, polyneuropathy, nstemi, diffuse cad, left pleural mass followed by fidious, copd, cardiac stent, breast cancer, breast ca, asthma, osteoporosis, orally controlled diabetes, atrial flutter, edema, type 2 dm, osa with cpap, cardiac myopathy, peripheral vascular disease, insulin dependent diabetes, otalgia, bipolar disease, obsessive compulsive disorder, cardiac risk factors of dm, sp oral cancer, metastatic renal cell cancer,  s/p l nephrectomy, t1 radiation right kidney ca, insulin requiring diabetes, bronchiectasis, osteopenia, lactose intolerance, oral hypoglycemic requiring diabetes, increased cholesterol, attention deficit disorder, diabetic neuropathy, overweight, renal transplant, cad s/p cabg, gout, nephrotic syndrome, chronic renal insufficiency, renal failure, oral hypoglycemic requiring diabetes, insulin-requiring diabetes mellitus, gastroesophageal reflux disease, chronic renal dysfunction, atrial fibrillation, parkinsons disease, glaucoma;  // new stuff from chd
+
+
+defDict htnnumaux= to, ,, and;
+
+defDict htnbe = is, was;
+
+defTokenProp htnnum1:in =: ...[@htncvd]...||...[a(htnnumaux)]...;
+
+defSpanType htnmanycvd =: ...[@htncvd htnnum1:in* @htncvd?]...;
+
+defDict htnstuff = :, -, .;
+
+defDict htnsex = male, female, f, m, man, woman, gentleman, patient;
+
+defSpanType htnpmh =~ trie past medical history, pmh, pmhx;
+
+defSpanType pressure =~ trie blood pressure, bp, sbp, blood pressures;
+
+//bp over 140-90 mm/hg
+defSpanType hbp =:
+... [eq('vitals') a(htnstuff)? re('[0-9]+') eq('.')? re('[0-9]')? eq(',') re('[0-9]+') eq(',') re('[1][4][0-9]')] ... ||
+... [eq('vitals') a(htnstuff)? re('[0-9]+') eq('.')? re('[0-9]')? eq(',') re('[0-9]+') eq(',') re('[1][5-9][0-9]')] ... ||
+... [eq('vitals') a(htnstuff)? re('[0-9]+') eq('.')? re('[0-9]')? eq(',') re('[0-9]+') eq(',') re('[2][0-9][0-9]')] ... ||
+//
+... @pressure any{0,6} eq('measured') [re('[1][5-9][0-9]')eq('/')re('[0-9]+')]...||
+... @pressure any{0,6} eq('measured') [re('[2][0-9][0-9]')eq('/')re('[0-9]+')]...||
+... @pressure any{0,6} eq('measured') [re('[1][4][0-9]')eq('/')re('[0-9]+')]...||
+... @pressure eq('of') [re('[1][5-9][0-9]') eq('s')? eq('/')re('[0-9]+')]...||
+... @pressure eq('of') [re('[2][0-9][0-9]') eq('s')? eq('/')re('[0-9]+')]...||
+... @pressure eq('of') [re('[1][4][0-9]') eq('s')? eq('/')re('[0-9]+')]...||
+... @pressure a(htnstuff)? eq('sitting')? a(htnbe)? [re('[2][0-9][0-9]')  eq('s')? ]...||
+... @pressure a(htnstuff)? eq('sitting')? a(htnbe)? [re('[1][5-9][0-9]')  eq('s')? ]...||
+... @pressure a(htnstuff)? eq('sitting')? a(htnbe)? [re('[1][4][0-9]')  eq('s')? ]...||
+... @pressure a(htnbe)? any{0,4} [re('[2][0-9][0-9]')]...|| // eq('/') re('[0-9]+')]...||
+... @pressure a(htnbe)? any{0,4} [re('[1][5-9][0-9]')] ...|| //eq('/') re('[0-9]+')]...||
+... @pressure a(htnbe)? any{0,4} [re('[1][4][0-9]')] ...|| /// eq('/') re('[0-9]+')] ...;
+///
+... @pressure eq('right') eq('arm') eq('sitting') [re('[2][0-9][0-9]')eq('/')re('[0-9]+')]...||
+... @pressure eq('right') eq('arm') eq('sitting') [re('[1][5-9][0-9]')eq('/')re('[0-9]+')]...||
+... @pressure eq('right') eq('arm') eq('sitting') [re('[1][4][0-9]')eq('/')re('[0-9]+')]...||
+... eq('wt') re('[0-9]+') [re('[2][0-9][0-9]')eq('/')re('[0-9]+')]...||
+... eq('wt') re('[0-9]+') [re('[1][5-9][0-9]')eq('/')re('[0-9]+')]...||
+... eq('wt') re('[0-9]+') [re('[1][4][0-9]')eq('/')re('[0-9]+')]...||
+... @pressure a(htnstuff)? eq('sitting')? a(htnbe)? [re('[2][0-9][0-9]')eq('/')re('[0-9]+')]...|| // submitted in the third run
+... @pressure a(htnstuff)? eq('sitting')? a(htnbe)? [re('[1][5-9][0-9]')eq('/')re('[0-9]+')]...||
+... @pressure a(htnstuff)? eq('sitting')? a(htnbe)? [re('[1][4][0-9]')eq('/')re('[0-9]+')]...;
+
+
+defSpanType htnhistory =:
+... [eq('w') eq('/') eq('pmhx') eq('of')] ... ||
+... [eq('w') eq('/') eq('pmhx') eq('for')] ... ||
+... [eq('w') eq('/') eq('pmh') eq('of')] ... ||
+... [eq('w') eq('/') eq('pmh') eq('for')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('history') eq('of')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('history') eq('for')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('hx') eq('of')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('h') eq('of')] ... ||
+... [eq('pmhx') eq('of')] ... ||
+... [eq('pmhx') eq('for')] ... ||
+... [eq('pmh') eq('of')] ... ||
+... [eq('pmh') eq('for')] ... ||
+... [eq('medical')? eq('h') eq('.') eq('o')] ... ||
+... [eq('medical')? eq('history') eq('of')] ... ||
+... [eq('medical')? eq('h') eq('/') eq('o')] ... ||
+... [eq('medical')? eq('history') ]... ||
+... [eq('medical')? eq('hx') ]... ||
+... [eq('medical')? eq('hx') eq('of')]...;
+
+defSpanType htnyears =:
+... [eq('years') eq('of')] ... ||
+... [eq('yo')]...; 
+
+defSpanType htnfollow =:
+... [eq('follow') eq('-') eq('up') eq('of')]...||
+... [eq('follow') eq('-') eq('up') eq('for')]...||
+... [eq('follow') eq('up') eq('of')]...||
+... [eq('follow') eq('up') eq('for')]...||
+... [eq('f') eq('/') eq('u') eq('for')]...||
+... [eq('f') eq('/') eq('u') eq('of')]...||
+... [eq('followed') any{0,3} eq('for')]...;
+
+defDict htnproblems = problems, morbidities, problem, morbidity;
+
+defSpanType htnmention =:
+//
+// these are uber specific rules for obesity - perhaps we can put them in the second run
+//... a(htnsex) eq('(') eq('crf') a(htnstuff) any{0,1} eq('smoker') eq(',') @htnmanycvd? [@htndiseases] ... ||
+//
+
+... eq('history') eq('of') eq('present') eq('illness') eq('includes') @htnmanycvd? [@htndiseases] ... ||
+... eq('attention') eq('to') [@htndiseases] ... ||
+... eq('#') re('[0-9]') eq(':')? eq(')')? [@htndiseases] ... || 
+... re('(has|had|was|is)') eq('diagnosed') re('(w|with)') @htnmanycvd? [@htndiseases] ... ||
+... eq('conditions') a(htnstuff)? eq(',')? re('(include|including)') a(htnstuff)? @htnmanycvd? [@htndiseases] ... ||
+... re('(diagnoses|diagnosis)') re('(include|include)') @htnmanycvd? [@htndiseases] ... || //
+... eq('risk') eq('factors') re('(include|including)') a(htnstuff)? @htnmanycvd? [@htndiseases] ... ||
+... eq('cc') eq(':')? eq('f') eq('/') eq('u') @htnmanycvd? [@htndiseases] ... ||
+... eq('has') eq('risk') eq('factors') eq('of')  @htnmanycvd? [@htndiseases] ...||
+... @htnfollow any{0,1} @htnmanycvd? [@htndiseases] ... || 
+... @htnpmh any{0,6} @htnmanycvd [@htndiseases] ... ||
+... re('[0-9]') eq('.') eq(')') [@htndiseases] ... ||
+... eq('management') re('(of|for)') @htnmanycvd? [@htndiseases] ... ||
+... eq('systems') a(htnbe) any{0,2} @htnmanycvd? [@htndiseases]... ||//
+... @htnpmh a(htnstuff)? [@htndiseases] ... ||
+... @htnpmh any{0,4} re('(of|for)') @htnmanycvd? [@htndiseases] ... ||
+... @htnpmh eq('/')? eq('psh')? any{0,4} @htnmanycvd? [@htndiseases] ... ||
+... @htnpmh eq('/')? eq('psh')? a(htnstuff)? [@htndiseases] ... ||
+... @htnpmh eq('/')? eq('psh')? a(htnstuff)? any{29} [@htndiseases] ... ||
+... @htnpmh any{0,6} @htnmanycvd? [@htndiseases] ... ||
+... re('(has|had)') re('(a|an)')? any{0,1} [@htndiseases] re('(history|hx)') ... ||
+... re('(has|had)') eq('poorly')? eq('controlled')? @htnmanycvd? [@htndiseases]...||
+... re('(her|his)') re('(problem|problems)') re('(for|of)')  @htnmanycvd? [@htndiseases] ...||
+... re('(her|his)') [@htndiseases] a(htnbe) ...||
+... re('(his|her)') any{0,1} [@htndiseases] ... ||
+... @htnyears any{0,1} @htnmanycvd? [@htndiseases] ... ||
+... @htnyears any{0,1} eq('with') @htnmanycvd? [@htndiseases] ... ||
+... [@htndiseases] eq('on') @htnmedications... ||
+... [@htndiseases] eq('continues') eq('on') @htnmedications... ||
+... a(htnsex) re('(with|w)') @htnhistory? @htnmanycvd? [@htndiseases] ... ||
+... a(htnsex) re('(with|w)') !eq('no') @htnhistory? @htnmanycvd? [@htndiseases] ... ||
+... a(htnsex) re('(with|w)') eq('mmp') any @htnmanycvd? [@htndiseases]...||
+... a(htnsex) @htnhistory @htnmanycvd? [@htndiseases] ...||
+... a(htnsex) any{0,3} eq('with') any{0,1} @htnmanycvd [@htndiseases] ... ||
+... eq('cc') eq(':')? eq('fu') @htnmanycvd? [@htndiseases] ... ||
+... re('[0-9]') eq(')') [@htndiseases] ... ||
+... re('[0-9]') eq('.') [@htndiseases] ... ||
+... eq('#') eq(')')? [@htndiseases] ... ||
+... eq('#') re('[0-9]') eq('.')? eq(')')? [@htndiseases] ... || //
+... a(htnproblems) a(htnstuff)? eq(',')? re('(include|including)') a(htnstuff)? @htnmanycvd? [@htndiseases] ... ||
+... a(htnproblems) any{13} [@htndiseases] ... ||
+... a(htnproblems) a(htnstuff)? @htnmanycvd? [@htndiseases] ... ||//
+... a(htnproblems) eq('#') re('[0-9]') any{0,1} [@htndiseases] ... ||
+... eq('positive') eq('for') [@htndiseases]...||
+... eq('r')eq('/')eq('t') [@htndiseases] ... ||
+... @htncvd a(htnstuff) any{0,6} [@htndiseases] ...||
+... !eq('no') @htnhistory @htnmanycvd? [@htndiseases]  ... ||
+... eq('w') eq('/') @htnhistory  @htnmanycvd? [@htndiseases] ... ||
+... @htncvd [@htndiseases] ...||
+... [@htndiseases] eq(':') ... || /// this is probably going to lead to many false positives
+... [@htndiseases] @htncvd...||
+... [@htndiseases] a(htnstuff) ...;

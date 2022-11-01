@@ -1,0 +1,133 @@
+// --- hyperlipidemia --- //
+
+provide 'hyperlipidemia';
+
+defSpanType hlmmedications =~ trie pravachol, zetia;
+
+defSpanType hlmdiseases =~ trie hyperlipidemia, hyperlipoproteinemia, hyperlipidaemia, dyslipidemia, hypercholesterolemia, hld, hl, lipids, hlp, high cholesterol, hypercholesteremia, high chol, elevated cholesterol, increased cholesterol;
+
+defSpanType hlmcvd =~ trie coronary heart disease, cad, coronary artery disease, heart disease, coronary disease, lipids, neuropathy, frozen shoulder, gerd, glucose intolerance with post prandial hyperglycemia, postmenopausal, cervical osteoarthritis ddd, hypovitaminosis d, obesity, central obesity, adiposity, general obesity, obese, morbid obesity, morbidly obese, microscopic hematuria with negative work up, anxiety, depression, bladder cancer, cataract, stroke, cards, palpitations, status post coronary artery bypass surgery, diabetes mellitus, aodm, diabetes mellitus type 2, diabetes mellitus type ii, diabetes mellitus type 1, diabetes mellitus type i,aodm type 2, aodm type ii, aodm type 1, aodm type i, adult onset diabetes mellitus, adult onset diabetes mellitus type 2, adult onset diabetes mellitus type ii, dmi, dmii,dm1, dm2, dmt1, dmt2, dmtii, dmti,diabetic ketoacidosis, diabetes type 1, diabetes type i, diabetes type 2, diabetes type ii, aod, adult onset diabetes, type 1 diabetes, type 2 diabetes, type i diabetes, type ii diabetes, type 1 diabetes mellitus, type 2 diabetes mellitus, type i diabetes mellitus, type ii diabetes mellitus, dka, hypersmolar hyperglycaemic state, hypoglycaemia, hyperglycaemia, non-insulin-dependent diabetes mellitus, diabetes, dm, type ii dm, type i dm, insulin-dependent diabetes, status post bypass surgery, mild dyslipidemia, coronary artery bypass surgery, hypertension, hypertensive disorder, htn, ht, high blood pressure, smoking, tobacco use, cigarette use, cigarette smoking, tobacco smoking, cigar smoking, cigars, cigar, cigarette, tob, smoking history, cigs, cigarette smoking history, cigar smoking history, tobacco smoking history, tob, tobacco, cigarette abuse, cigar abuse, smoking abuse, tobacco abuse, tobac, smoking cigarettes, smoking cigars, smoking tobacco,  coronary ischemia, coronary arteriosclerosis, iddm, dm 2, dm 1, insulin-requiring dm, dyspepsia, depression, insomnia, syncope, carotid stenosis, psychosis, osteoarthritis, cerebrovascular disease, recurrent utis, hypothyroidism, hidradenitis, chronic venous stasis, pulmht, osa, copd, chronic venous stasis with recurrent leg ulcers, peripheral neuropathy , h/o left foot infection, erectile dysfunction, onychomycosis, diabetic retinopathy, ischemic cardiomyopathy, inferior myocardial infarction, polyp of colon, sleep apnea,  status post cholecystectomy, chronic obstructive pulmonary disease, arthritis, congestive heart failure secondary to diastolic dysfunction, congestive heart failure, renal insufficiency with baseline creatinine approximately 3, renal insufficiency, atrial fibirllation, peripheral vascular disease, colon polyps, diverticulosis adenoid hypertrophy, humeral fracture, peripheral arterial disease,aortic stenosis, niddm, pulmonary hypertension, venous stasis with chronic leg ulcers, chf, prior history, b-cell lymphoma, pontine stroke, basilar artery stent, herpes zoster, graft versus host disease, hypertension, hyperlipidemia, hyperhomocysteinemia, pseudomonas pneumonia, heart murmur, bph, hepatitis c, gallstones, insulin-dependent diabetes mellitus, insulin dependent diabetes mellitus, insulin-dependent dm, insulin dependent dm, atrial fibrillation, ckd, psoriasis, mental retardation, benign prostatic hypertrophy, insomnia, nephrotic syndrome, history of previous cva, status post cabg, glucose intolerance, abdominal aortic aneurysm repair, chronic pneumonia, chronic wound infection, history of chronic urinary tract infections, change in mental status, cad s/p ptca, pvd, as x/p avr, mr, interstitial lung disese, mi, non-insulin-dependent diabetes, right upper quadrant pain, dyspnea, glasses, esophageal cancer, seizure disorder, nonspecific peripheral neuropathy, malignant hypertension, spinal stenosis, pe, carotid artery stenosis, chd, status post imi, afib, cabg, ppm, recent stent,kidney stones, autonomic insufficiency, polyneuropathy, nstemi, diffuse cad, left pleural mass followed by fidious, copd, cardiac stent, non-insulin dependent diabetes, breast cancer, breast ca, asthma, osteoporosis, orally controlled diabetes, atrial flutter, edema, type 2 dm, osa with cpap, cardiac myopathy, peripheral vascular disease, insulin dependent diabetes, otalgia, bipolar disease, obsessive compulsive disorder, cardiac risk factors of dm, sp oral cancer, metastatic renal cell cancer,  s/p l nephrectomy, t1 radiation right kidney ca, insulin requiring diabetes, bronchiectasis, osteopenia, lactose intolerance, oral hypoglycemic requiring diabetes, essential hypertension, attention deficit disorder, diabetic neuropathy, overweight, renal transplant, cad s/p cabg, gout, nephrotic syndrome, chronic renal insufficiency, renal failure, oral hypoglycemic requiring diabetes, insulin-requiring diabetes mellitus, gastroesophageal reflux disease, chronic renal dysfunction, atrial fibrillation, parkinsons disease, glaucoma;
+
+defDict hlmnumaux= to, ,, and;
+
+defDict hlmbe = is, was;
+
+defTokenProp hlmnum1:in =: ...[@hlmcvd]...||...[a(hlmnumaux)]...;
+
+defSpanType hlmmanycvd =: ...[@hlmcvd hlmnum1:in* @chlmvd?]...;
+
+defDict hlmstuff = :, -, .;
+
+defDict hlmsex = male, female, f, m, man, woman, gentleman, patient;
+
+defSpanType hlmpmh =~ trie past medical history, pmh, pmhx;
+
+defSpanType hcholesterol =:
+// cholesterol over 240
+... [eq('chol') re('[2][4-9][0-9]')] ... ||
+... [eq('chol') re('[3-9][0-9][0-9]')] ... ||
+... [eq('cholesterol') any{0,1} re('[2][4-9][0-9]')] ... ||
+... [eq('cholesterol') any{0,1} re('[3-9][0-9][0-9]')] ... ||
+... [eq('total')? eq('cholesterol') eq('level')? a(hlmbe) any? re('[2][4-9][0-9]')] ... ||
+... [eq('total')? eq('cholesterol') eq('level')? a(hlmbe) any? re('[3-9][0-9][0-9]')] ... ||
+... [eq('total')? eq('cholesterol') any{4} re('[2][4-9][0-9]')] ...|| 
+... [eq('total')? eq('cholesterol') any{4} re('[3-9][0-9][0-9]')] ...; 
+
+defSpanType ldl =:
+// ldl measurement over 100 mg/dl
+... [eq('low') eq('density') eq('lipoprotein') a(hlmbe)? re('[1-2][0-9][0-9]')] ... ||
+... [eq('low') eq('density') eq('lipoprotein') a(hlmbe)? re('[1-2][0-9][0-9]')] ... ||
+... [eq('low') eq('density') eq('lipoprotein') re('[1-2][0-9][0-9]')] ... ||
+... [eq('chol')? a(hlmstuff)? eq('ldl') re('[0-9]{4}')] ... ||
+... [eq('chol')? a(hlmstuff)? eq('ldl') re('[1-2][0-9][0-9]')] ... ||
+... [eq('cholesterol')? a(hlmstuff)? eq('ldl') re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}')eq('/')re('[0-9]{2,4}') [re('[1-2][0-9][0-9]')] ... ||
+... [eq('ldl') eq('cholesterol')? eq('of')? a(hlmstuff)? re('[1-2][0-9][0-9]')] ... ||
+... [eq('ldl') eq('cholesterol')? a(hlmbe) any? re('[1-2][0-9][0-9]')] ... ;
+
+defSpanType hlmhistory =:
+... [eq('w') eq('/') eq('pmhx') eq('of')] ... ||
+... [eq('w') eq('/') eq('pmhx') eq('for')] ... ||
+... [eq('w') eq('/') eq('pmh') eq('of')] ... ||
+... [eq('w') eq('/') eq('pmh') eq('for')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('history') eq('of')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('history') eq('for')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('hx') eq('of')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('h') eq('of')] ... ||
+... [eq('pmhx') eq('of')] ... ||
+... [eq('pmhx') eq('for')] ... ||
+... [eq('pmh') eq('of')] ... ||
+... [eq('pmh') eq('for')] ... ||
+... [eq('medical')? eq('h') eq('.') eq('o')] ... ||
+... [eq('medical')? eq('history') eq('of')] ... ||
+... [eq('medical')? eq('h') eq('/') eq('o')] ... ||
+... [eq('medical')? eq('history') ]... ||
+... [eq('medical')? eq('hx') ]... ||
+... [eq('medical')? eq('hx') eq('of')]...;
+
+defSpanType hlmyears =:
+... [eq('years') eq('of')] ... ||
+... [eq('yo')]...; 
+
+defSpanType hlmfollow =:
+... [eq('follow') eq('-') eq('up') eq('of')]...||
+... [eq('follow') eq('-') eq('up') eq('for')]...||
+... [eq('follow') eq('up') eq('of')]...||
+... [eq('follow') eq('up') eq('for')]...||
+... [eq('f') eq('/') eq('u') eq('for')]...||
+... [eq('f') eq('/') eq('u') eq('of')]...||
+... [eq('followed') any{0,3} eq('for')]...;
+
+defDict hlmproblems = problems, morbidities, problem, morbidity;
+
+defSpanType hyperlipidemia =:
+... eq('history') eq('of') eq('present') eq('illness') eq('includes') @hlmmanycvd? [@hlmdiseases] ... ||
+... eq('attention') eq('to') [@hlmdiseases] ... ||
+... eq('#') re('[0-9]') eq(':')? eq(')')? [@hlmdiseases] ... || 
+... re('(has|had|was|is)') eq('diagnosed') re('(w|with)') @hlmmanycvd? [@hlmdiseases] ... ||
+... eq('conditions') a(hlmstuff)? eq(',')? re('(include|including)') a(hlmstuff)? @hlmmanycvd? [@hlmdiseases] ... ||
+... eq('cc') eq(':')? eq('f') eq('/') eq('u') @hlmmanycvd? [@hlmdiseases] ... ||
+... @hlmfollow any{0,1} @hlmmanycvd? [@hlmdiseases] ... || 
+... [eq('elevated') eq('cholesterol') eq('-') eq('-')] ... ||
+... [re('[having|had]') eq('an') eq('elevated') eq('cholesterol')] ... ||
+... @hlmpmh any{0,6} @hlmmanycvd [@hlmdiseases] ... ||
+... re('[0-9]') eq('.') eq(')') [@hlmdiseases] ... ||
+... eq('systems') a(hlmbe) any{0,2} @hlmmanycvd? [@hlmdiseases]... ||
+... re('(diagnoses|diagnosis)') re('(include|include)') @hlmmanycvd? [@hlmdiseases] ... || 
+... @hlmyears any{0,1} @hlmmanycvd? [@hlmdiseases] ... ||
+... @hlmyears any{0,1} eq('with') @hlmmanycvd? [@hlmdiseases] ... ||
+... eq('has') eq('risk') eq('factors') eq('of')  @hlmmanycvd? [@hlmdiseases] ...||
+... re('(has|had)') re('(a|an)')? any{0,1} [@hlmdiseases] re('(history|hx)') ... ||
+... re('(has|had)') eq('poorly')? eq('controlled')? @hlmmanycvd? [@hlmdiseases]...|| 
+... re('(his|her)') any{0,1} [@hlmdiseases] ... ||
+... re('(her|his)') re('(problem| problems)') re('(for|of)') [@hlmdiseases] ...||
+... eq('positive') eq('for') [@hlmdiseases]...||
+... eq('r')eq('/')eq('t') [@hlmdiseases] ... ||
+... !eq('no') @hlmhistory @hlmmanycvd? [@hlmdiseases]  ... ||
+... @hlmpmh eq('/')? eq('psh')? any{0,4} @hlmmanycvd? [@hlmdiseases] ... ||
+... @hlmpmh eq('/')? eq('psh')? a(hlmstuff)? [@hlmdiseases] ... ||
+... @hlmpmh eq('/')? eq('psh')? a(hlmstuff)? any{29} [@hlmdiseases] ... ||
+... @hlmpmh a(hlmstuff)? [@hlmdiseases] ... ||
+... @hlmpmh any{0,4} re('(of|for)') @hlmmanycvd? [@hlmdiseases] ... ||
+... @hlmpmh any{0,4} @hlmmanycvd? [@hlmdiseases] ... ||
+... eq('cc') eq(':')? eq('fu') @hlmmanycvd? [@hlmdiseases] ... ||
+... a(hlmsex) re('(with|w)') !eq('no') @hlmhistory? @hlmmanycvd? [@hlmdiseases]...||
+... a(hlmsex) re('(with|w)') @hlmhistory? @hlmmanycvd? [@hlmdiseases]...||
+... a(hlmsex) re('(with|w)') eq('mmp') any @hlmmanycvd? [@hlmdiseases]...||
+... a(hlmsex) @hlmhistory @hlmmanycvd? [@hlmdiseases] ...||
+... a(hlmsex) any{0,3} eq('with') any{0,1} @hlmmanycvd [@hlmdiseases] ... ||
+... eq('#') eq(')')? [@hlmdiseases] ... ||
+... eq('#') re('[0-9]') eq('.')? eq(')')? [@hlmdiseases] ... || 
+... re('[0-9]') eq(')') [@hlmdiseases] ... ||
+... re('[0-9]') eq('.') [@hlmdiseases] ... ||
+... eq('risk') eq('factors') re('(include|including)') a(hlmstuff)? @hlmmanycvd? [@hlmdiseases] ... ||
+... a(hlmproblems) a(hlmstuff)? @hlmmabycvd? [@hlmdiseases] ... || 
+... a(hlmproblems) any{13} [@hlmdiseases] ... ||
+... a(hlmproblems) eq('#') re('[0-9]') any{0,1} [@hlmdiseases] ... ||
+... a(hlmproblems) a(hlmstuff)? eq(',')? re('(include|including)') a(hlmstuff)? @hlmmanycvd? [@hlmdiseases] ... ||
+... @hlmcvd a(hlmstuff) any{0,6} [@hlmdiseases] ...||
+... @hlmcvd [@hlmdiseases] ... ||
+... [@hlmdiseases] eq(':') ... || /// this is probably going to lead to many false positives
+... [@hlmdiseases] eq('on') @hlmmedications... ||
+... [@hlmdiseases] eq('continues') eq('on') @hlmmedications... ||
+... [@hlmdiseases] a(hlmstuff) ... ||
+... [@hlmdiseases] @hlmcvd ... ;

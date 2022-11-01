@@ -1,0 +1,178 @@
+// --- diabetes ---
+
+provide 'diabetes';
+
+defSpanType diseases =~ trie diabetes mellitus, aodm, diabetes mellitus type 2, diabetes mellitus type ii, diabetes mellitus type 1, diabetes mellitus type i,aodm type 2, aodm type ii, aodm type 1, aodm type i, adult onset diabetes mellitus, adult onset diabetes mellitus type 2, adult onset diabetes mellitus type ii, dmi, dmii,dm1, dm2, dmt1, dmt2, dmtii, dmti,diabetic ketoacidosis, diabetes type 1, diabetes type i, diabetes type 2, diabetes type ii, aod, adult onset diabetes, type 1 diabetes, type 2 diabetes, type i diabetes, type ii diabetes, type 1 diabetes mellitus, type 2 diabetes mellitus, type i diabetes mellitus, type ii diabetes mellitus, dka, hypersmolar hyperglycaemic state, hypoglycaemia, hyperglycaemia, non-insulin-dependent diabetes mellitus, diabetes, dm, type ii dm, type i dm, insulin-dependent diabetes, insulin dependent diabetes mellitus, iddm, dm 2, dm 1, insulin-requiring dm, niddm, insulin-dependent diabetes mellitus, insulin dependent diabetes mellitus, insulin-dependent dm, insulin dependent dm, iddm, non-insulin-dependent diabetes, cardiac risk factors of dm, non-insulin dependent diabetes, orally controlled diabetes, type 2 dm, insulin dependent diabetes, insulin requiring diabetes, oral hypoglycemic requiring diabetes, insulin-requiring diabetes mellitus;
+
+defSpanType cvd =~ trie coronary heart disease, hypertension, hyperlipidemia, cad, coronary artery disease, heart disease, high blood pressure, hypercholesterolemia, lipids, neuropathy, frozen shoulder, gerd, htn, stroke, hypertensive disorder, glucose intolerance with post prandial hyperglycemia, postmenopausal, coronary disease, smoking, glucose intolerance with post prandial hyperglycemia, postmenopausal, cervical osteoarthritis ddd, hypovitaminosis d, obesity, central obesity, adiposity, general obesity, obese, morbid obesity, morbidly obese, microscopic hematuria with negative work up, anxiety, depression, bladder cancer, cataract, stroke, cards, palpitations, status post coronary artery bypass surgery, status post bypass surgery, mild dyslipidemia, coronary artery bypass surgery, hyperlipoproteinemia, hyperlipidaemia, dyslipidemia, hld, hl,  coronary ischemia, coronary arteriosclerosis, dyspepsia, depression, insomnia, syncope, carotid stenosis, psychosis, osteoarthritis, cerebrovascular disease, recurrent utis, hlp, hypothyroidism, high cholesterol, hidradenitis, chronic venous stasis, pulmht, osa, copd, chronic venous stasis with recurrent leg ulcers, peripheral neuropathy , h/o left foot infection, erectile dysfunction, onychomycosis, diabetic retinopathy, ischemic cardiomyopathy, inferior myocardial infarction, polyp of colon, sleep apnea,  status post cholecystectomy, chronic obstructive pulmonary disease, arthritis, congestive heart failure secondary to diastolic dysfunction, congestive heart failure, renal insufficiency with baseline creatinine approximately 3, renal insufficiency, atrial fibirllation, peripheral vascular disease, colon polyps, diverticulosis adenoid hypertrophy, humeral fracture, peripheral arterial disease,aortic stenosis, niddm, pulmonary hypertension, venous stasis with chronic leg ulcers, chf, prior history, b-cell lymphoma, pontine stroke, basilar artery stent, herpes zoster, graft versus host disease, hypertension, hyperlipidemia, hyperhomocysteinemia, pseudomonas pneumonia, heart murmur, bph, hepatitis c, gallstones, atrial fibrillation, ckd, psoriasis, mental retardation, benign prostatic hypertrophy, insomnia, nephrotic syndrome, history of previous cva, status post cabg, glucose intolerance, abdominal aortic aneurysm repair, chronic pneumonia, chronic wound infection, history of chronic urinary tract infections, change in mental status, cad s/p ptca, pvd, as x/p avr, mr, interstitial lung disese, mi, right upper quadrant pain, dyspnea, glasses, esophageal cancer, seizure disorder, nonspecific peripheral neuropathy, malignant hypertension, spinal stenosis, pe, carotid artery stenosis, chd, hepatitis c, otalgia, bipolar disease, obsessive compulsive disorder, cardiac risk factors of dm, sp oral cancer, status post imi, afib, cabg, ppm, recent stent,kidney stones, autonomic insufficiency, polyneuropathy, nstemi, diffuse cad, left pleural mass followed by fidious, copd, cardiac stent, non-insulin dependent diabetes, breast cancer, breast ca, asthma, osteoporosis, orally controlled diabetes, atrial flutter, edema, type 2 dm, osa with cpap, cardiac myopathy, peripheral vascular disease, insulin dependent diabetes, elevated cholesterol, metastatic renal cell cancer,  s/p l nephrectomy, t1 radiation right kidney ca, insulin requiring diabetes, bronchiectasis, osteopenia, lactose intolerance, oral hypoglycemic requiring diabetes, increased cholesterol, attention deficit disorder, diabetic neuropathy, depressive disorder, overweight, renal transplant, cad s/p cabg, gout, nephrotic syndrome, chronic renal insufficiency, renal failure, gastroesophageal reflux disease, chronic renal dysfunction, atrial fibrillation, parkinsons disease, glaucoma; 
+
+defDict numaux= to, ,, and;
+
+defTokenProp num1:in =: ...[@cvd]...||...[a(numaux)]...;
+
+defSpanType manycvd =: ...[@cvd num1:in* @cvd?]...; 
+
+defDict be = is, was;
+
+defDict stuff = :, -, .;
+
+defSpanType hemo =~ trie hbg, glycohemoglobin, hemoglobin, hgba1c, a1c, hba1c, hgbaic, hbaic, hgb a1c, hgb aic, hga1c, hg a1c, hgaic, hemoglobin a1c;
+
+defDict sex = male, female, f, m, man, woman, gentleman, patient;
+
+defSpanType pmh =~ trie past medical history, pmh, pmhx;
+
+defSpanType finger =~ trie fingerstick, finger stick;
+
+defSpanType cadfactors =~ trie risk factors, diagnosis, diagnoses, conditions, complications;
+
+// this is for the glucose levels diagnosis
+defSpanType glucose =:
+... [eq('glucose') eq('above') re('[2-9][0-9][0-9]')] ... || // submitted in a third run
+... [eq('glucose') eq('above') re('[1][3-9][0-9]')] ... ||
+... [eq('glucose') eq('above') re('[1][2][6-9]')] ... ||
+... [eq('glucose') re('[2][0-9][0-9]')] ... ||
+... [eq('glucose') re('[1][3-9][0-9]')] ... ||
+... [eq('glucose') re('[1][2][6-9]')] ... ||
+/// take the above way better results than with them :/
+... [eq('glucose') eq('in') eq('the') re('[2][0-9][0-9]')] ... ||
+... [eq('glucose') eq('in') eq('the') re('[1][3-9][0-9]')] ... ||
+... [eq('glucose') eq('in') eq('the') re('[1][2][6-9]')] ... ||
+... [eq('glucose') eq('(') eq('stat') eq('lab') eq(')') re('[2][0-9][0-9]')] ... ||
+... [eq('glucose') eq('(') eq('stat') eq('lab') eq(')') re('[1][3-9][0-9]')] ... ||
+... [eq('glucose') eq('(') eq('stat') eq('lab') eq(')') re('[1][2][6-9]')] ... ||
+... eq('blood') eq('glucose') @finger [re('[2][0-9][0-9]')] ... ||
+... eq('blood') eq('glucose') @finger [re('[1][3-9][0-9]')] ... ||
+... eq('blood') eq('glucose') @finger [re('[1][2][6-9]')] ... ||
+... @finger re('(of|is)') [re('[1][2][6-9]')] ...||
+... @finger re('(of|is)') [re('[1][3-9][0-9]')] ...||
+... @finger re('(of|is)') [re('[2][0-9][0-9]')] ...||
+... eq('na') eq('k') eq('cl') eq('co') eq('2') eq('bun') eq('cre') eq('glu') eq('ca') re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}')eq('/')re('[0-9]{2,4}') any{12} [re('[2][0-9][0-9]')]...||
+... eq('na') eq('k') eq('cl') eq('co') eq('2') eq('bun') eq('cre') eq('glu') eq('ca') re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}')eq('/')re('[0-9]{2,4}') any{12} [re('[1][3-9][0-9]')]...||
+... eq('na') eq('k') eq('cl') eq('co') eq('2') eq('bun') eq('cre') eq('glu') eq('ca') re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}')eq('/')re('[0-9]{2,4}') any{12} [re('[1][2][6-9]')]...||
+... eq('na') eq('k') eq('bun') eq('cre')  eq('glu') re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}')eq('/')re('[0-9]{2,4}') any{8} [re('[2][0-9][0-9]')]...||
+... eq('na') eq('k') eq('bun') eq('cre')  eq('glu') re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}')eq('/')re('[0-9]{2,4}') any{8} [re('[1][3-9][0-9]')]...||
+... eq('na') eq('k') eq('bun') eq('cre')  eq('glu') re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}')eq('/')re('[0-9]{2,4}') any{8} [re('[1][2][6-9]')]...||
+... [eq('glu') eqi(':')? re('[2][0-9][0-9]')]...||
+... [eq('glu') eqi(':')? re('[1][3-9][0-9]')]...||
+... [eq('glu') eqi(':')? re('[1][2][6-9]')]...;
+
+// this is for the hemoglobin diagnosis
+defSpanType A1C =:
+...@hemo eq('in') re('[0-9]') eq('/') re('[0-9]+') a(be) [re('[1-9][0-9]')eq('.')?re('[0-9]')?] ... || //submitted in a third run
+...@hemo eq('in') re('[0-9]') eq('/') re('[0-9]+') a(be) [re('[7-9]')eq('.')?re('[0-9]')?] ... ||
+...@hemo eq('in') re('[0-9]') eq('/') re('[0-9]+') a(be) [re('[6]')eq('.')re('[5-9]')] ... ||
+...[@hemo eq('(') re('[1-9][0-9]')eq('.')?re('[0-9]')? eq(')') ] ... ||
+...[@hemo eq('(') re('[7-9]')eq('.')?re('[0-9]')? eq(')') ] ... ||
+...[@hemo eq('(') re('[6]')eq('.')re('[5-9]') ] ... ||
+// take the above way better results in overall diabetes performance
+... @hemo re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}')eq('/')re('[0-9]{2,4}') [re('[1-9][0-9]')eq('.')?re('[0-9]')?] ... ||
+... @hemo re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}')eq('/')re('[0-9]{2,4}') [re('[7-9]')eq('.')?re('[0-9]')?] ... ||
+... @hemo re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}')eq('/')re('[0-9]{2,4}') [re('[6]')eq('.')re('[5-9]')] ... ||
+...[@hemo any{0,1} a(be) any{0,2} re('[1-9][0-9]')eq('.')?re('[0-9]')?]...||
+...[@hemo any{0,1} a(be) any{0,2} re('[7-9]')eq('.')?re('[0-9]')?]...||
+...[@hemo any{0,1} a(be) any{0,2} re('[6]')eq('.')re('[5-9]')]...||
+...[@hemo eq('over') re('[1-9][0-9]') eq('.') re('[0-9]')?]...||
+...[@hemo eq('over') re('[7-9]') eq('.')? re('[0-9]')?]...||
+...[@hemo eq('over') re('[6]') eq('.') re('[5-9]')]...||
+...[@hemo eq('up') eq('to') re('[1-9][0-9]')eq('.')re('[0-9]')?]...||
+...[@hemo eq('up') eq('to') re('[7-9]')eq('.')?re('[0-9]')?]...||
+...[@hemo eq('up') eq('to') re('[6]')eq('.')re('[5-9]')]...||
+...[@hemo eq('of') re('[1-9][0-9]')eq('.')?re('[0-9]')?]...||
+...[@hemo eq('of') re('[7-9]')eq('.')?re('[0-9]')?]...||
+...[@hemo eq('of') re('[6]')eq('.')re('[5-9]')]...||
+...[@hemo re('\s+')? re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}') eq('-')? re('[1-9][0-9]')eq('.')?re('[0-9]')?]...||
+...[@hemo re('\s+')? re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}') eq('-')? re('[7-9]')eq('.')?re('[0-9]+')?]...||
+...[@hemo re('\s+')? re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}') eq('-')? re('[6]')eq('.')re('[5-9]')]...||
+...[@hemo re('\s+')? re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}')eq('/')re('[0-9]{2,4}') re('[1-9][0-9]')eq('.')?re('[0-9]')?]...||
+...[@hemo re('\s+')? re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}')eq('/')re('[0-9]{2,4}') re('[7-9]')eq('.')?re('[0-9]+')?]...||
+...[@hemo re('\s+')? re('[0-9]{1,2}')eq('/')re('[0-9]{1,2}')eq('/')re('[0-9]{2,4}') re('[6]')eq('.')re('[5-9]')]...||
+...[@hemo a(stuff)? a(stuff)? a(be)? re('[1-9][0-9]')eq('.')?re('[0-9]')?]...||
+...[@hemo a(stuff)? a(stuff)? a(be)? re('[7-9]')eq('.')?re('[0-9]')?]...||
+...[@hemo a(stuff)? a(stuff)? a(be)? re('[6]')eq('.')re('[5-9]')]...;
+
+defSpanType history =:
+... [eq('w') eq('/') eq('pmhx') eq('of')] ... ||
+... [eq('w') eq('/') eq('pmhx') eq('for')] ... ||
+... [eq('w') eq('/') eq('pmh') eq('of')] ... ||
+... [eq('w') eq('/') eq('pmh') eq('for')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('history') eq('of')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('history') eq('for')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('hx') eq('of')] ... ||
+... [eq('w') eq('/') eq('medical')? eq('h') eq('of')] ... ||
+... [eq('pmhx') eq('of')] ... ||
+... [eq('pmhx') eq('for')] ... ||
+... [eq('pmh') eq('of')] ... ||
+... [eq('pmh') eq('for')] ... ||
+... [eq('medical')? eq('history') eq('of')] ... ||
+... [eq('medical')? eq('h') eq('.') eq('o')] ... ||
+... [eq('medical')? eq('h') eq('/') eq('o')] ... ||
+... [eq('medical')? eq('history') ]... ||
+... [eq('medical')? eq('hx') ]... ||
+... [eq('medical')? eq('hx') eq('of')]...;
+
+defSpanType years =:
+... [eq('years') eq('of')] ... ||
+... [eq('yo')]...; 
+
+defSpanType follow =:
+... [eq('follow') eq('-') eq('up') eq('of')]...||
+... [eq('follow') eq('-') eq('up') eq('for')]...||
+... [eq('follow') eq('up') eq('of')]...||
+... [eq('follow') eq('up') eq('for')]...||
+... [eq('f') eq('/') eq('u') eq('for')]...||
+... [eq('f') eq('/') eq('u') eq('of')]...||
+... [eq('followed') any{0,3} eq('for')]...;
+
+defDict problems = problems, morbidities, problem, morbidity;
+
+defSpanType diabetes =:
+... re('(he|she)') any{0,1} a(be) any{0,1} eq('insulin')? eq('-')? eq('dependent')? [eq('diabetic')] ... ||//*****************
+... eq('history') eq('of') eq('present') eq('illness') eq('includes') @manycvd? [@diseases] ... ||//*****************
+... eq('attention') eq('to') [@diseases] ... ||//*****************
+... eq('management') re('(of|for)') @cadmanycvd? [@caddiseases] ... ||
+... eq('systems') a(be) any{0,2} @manycvd? [@diseases]... ||//
+... re('(diagnoses|diagnosis)') re('(include|include)') @manycvd? [@diseases] ... ||
+... eq('risk') eq('factors') re('(include|including)') a(stuff)? @manycvd? [@diseases] ... ||
+... re('(has|had|was|is)') eq('diagnosed') re('(w|with)') @manycvd? [@diseases] ... ||//*****************
+... eq('conditions') a(stuff)? eq(',')? re('(include|including)') a(stuff)? @manycvd? [@diseases] ... ||//*****************
+... @follow any{0,1} @manycvd? [@diseases] ... || //*****************
+... re('[0-9]') eq('.') eq(')') [@diseases] ... ||//*****************
+... @cvd [@diseases] ... ||
+... [@diseases]  @cvd  ... ||
+... [@diseases] eq(':')? eq('redcheck')  @hemo ... ||
+... [@diseases] re('on|not')...||
+... [@diseases] eq(':') ... || /// this is probably going to lead to many false positives//*****************
+... eq('#') re('[0-9]') eq('.')? eq(')')? [@diseases] ... || //
+... eq('#') eq(')')? [@diseases] ... ||
+... re('[0-9]')eq(')') [@diseases] ... ||
+... re('[0-9]')eq('.') [@diseases] ... ||
+... @years any{0,1} @manycvd? [@diseases] ... ||
+... @years any{0,1} eq('with') @manycvd? [@diseases] ... ||
+... re('(his|her)') any{0,1} [@diseases] ... ||//*****************
+... eq('cc') eq(':')? eq('f') eq('/') eq('u') @manycvd? [@diseases] ... ||//*****************
+... eq('cc') any{1,4} @manycvd? [@diseases] ... ||
+... a(problems) any{13} [@diseases] ... ||
+... a(problems) a(stuff)? [@diseases] ... ||
+... a(problems) eq('#') re('[0-9]') any{0,1} [@diseases] ... ||
+... a(problems) a(stuff)? @mabycvd [@diseases] ... || 
+... a(problems) a(stuff)? eq(',')? re('(include|including)') a(stuff)? @mabycvd? [@diseases] ... ||
+...  @history any{0,1} @manycvd? [@diseases] ... ||//
+... @pmh a(stuff)? [@diseases] ... ||
+... @pmh any{0,6} @manycvd? [@diseases] ... ||//*****************
+... @pmh any{0,4} re('(of|for)') @manycvd? [@diseases] ... ||
+... @pmh eq('/')? eq('psh')? any{0,4} @manycvd? [@diseases] ... ||
+... @pmh eq('/')? eq('psh')? a(stuff)?  @manycvd? [@diseases] ... ||
+... @pmh eq('/')? eq('psh')? a(stuff)? any{29} [@diseases] ... ||
+... a(sex) @history @manycvd? [@diseases] ...||
+... a(sex) re('(with|w)') !eq('no') @history? @manycvd? [@diseases] ...||
+... a(sex) re('(with|w)') @history? @manycvd? [@diseases] ...||
+... a(sex) a(be) any{0,2} [eq('obese')] ... ||
+... a(sex) re('(with|w)') eq('mmp') any @manycvd? [@diseases]...||
+... a(sex) any{0,3} eq('with') any{0,1} @manycvd [@diseases] ... ||
+... !eq('no') @history @manycvd? [@diseases]...||
+... eq('positive') eq('for') @manycvd? [@diseases]...||
+... eq('r')eq('/')eq('t') [@diseases] ... ||
+... eq('has') eq('risk') eq('factors') eq('of')  @manycvd? [@diseases] ...||//*****************
+... re('(has|had)') eq('poorly')? eq('controlled')? @manycvd? [@diseases]...|| //
+... re('(has|had)') re('(a|an)')? any{0,1} [@diseases] re('(history|hx)') ... ;

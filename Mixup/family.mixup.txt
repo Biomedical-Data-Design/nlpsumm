@@ -1,0 +1,42 @@
+// --- family history --//
+
+provide 'familyhistory';
+
+// the criteria for the identification of family history in the i2b2 challenge are:
+// any relative first degree with the patient. This means:
+// brother - below 55 years old, sister - below 65 years old, father < 55 yo,
+// mother <65 yo, daughter <65 yo, son < 55 yo, children.
+
+defDict fhmale = father, son, brother;
+
+defDict fhfemale = mother, daughter, sister;
+
+defSpanType fhdiseases =~ trie coronary heart disease, coronary artery disease, cad, chd, coronary disease, heart disease,  coronary ischemia, coronary arteriosclerosis;
+
+defDict fhstuff = :, -, .;
+
+defSpanType familyhistory =:
+// new rules //
+... [eq('family') eq('hx') eq('of') any{0,1} @fhdiseases] ...||
+... [eq('family') eq('history') eq('of') any{0,1} @fhdiseases] ...||
+... [eq('positive') eq('family') eq('history') eq('for') @fhdiseases] ...||
+... [eq('early') any{0,1} eq('onset') @fhdiseases any a(fhfemale)] ...||
+... [eq('early') any{0,1} eq('onset') @fhdiseases any a(fhmale)] ...||
+/// new rules //
+... [@fhdiseases] eq('relative')? a(fhstuff)? a(fhmale) re('[5][5-9]')?] ... ||
+... [@fhdiseases] eq('relative')? a(fhstuff)? a(fhmale) re('[6-9][0-9]')?] ... ||
+... [@fhdiseases] eq('relative')? a(fhstuff)? a(fhfemale) re('[6][5-9]')?] ... ||
+... [@fhdiseases] eq('relative')? a(fhstuff)? a(fhfemale) re('[7-9][0-9]')?] ... ||
+... [a(fhmale) re('(had|has)') @fhdiseases any{1,4} re('[5][5-9]')] ... ||
+... [a(fhmale) re('(had|has)') @fhdiseases any{1,4} re('[6-9][0-9]')] ... ||
+... [a(fhfemale) re('(had|has)') @fhdiseases any{1,4} re('[6][5-9]')] ... ||
+... [a(fhfemale) re('(had|has)') @fhdiseases any{1,4} re('[7-9][0-9]')] ... ||
+... [a(fhmale) a(fhstuff)? @fhdiseases re('[5][5-9]')?] ... ||
+... [a(fhmale) a(fhstuff)? @fhdiseases re('[6-9][0-9]')?] ... ||
+... [a(fhfemale) a(fhstuff)? @fhdiseases re('[6][5-9]')?] ... ||
+... [a(fhfemale) a(fhstuff)? @fhdiseases re('[7-9][0-9]')?] ... ||
+... [a(fhmale) a(fhstuff) any{0,1} @fhdiseases any{1,5} re('[5][5-9]')] ... ||
+... [a(fhmale) a(fhstuff) any{0,1} @fhdiseases any{1,5} re('[6-9][0-9]')] ... ||
+... [a(fhfemale) a(fhstuff) any{0,1} @fhdiseases any{1,5} re('[6][5-9]')] ... ||
+... [a(fhfemale) a(fhstuff) any{0,1} @fhdiseases any{1,5} re('[7-9][0-9]')] ... ;
+
