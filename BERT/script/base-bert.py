@@ -12,9 +12,9 @@ data_folder = '/home/yliu498/BERT/data_processed'
 columns = {0: 'text', 1: 'ner'}
 
 corpus: Corpus = ColumnCorpus(data_folder,columns,
-                              train_file = 'all_1.txt',
+                              train_file = 'train_1.txt',
                               test_file = 'testdata.txt',
-                              dev_file = None)
+                              dev_file = 'dev_1.txt')
 
 # 2. what label do we want to predict?
 label_type = 'ner'
@@ -28,8 +28,7 @@ embeddings = TransformerWordEmbeddings(model='bert-base-uncased',
                                        layers="-1",
                                        subtoken_pooling="first",
                                        fine_tune=True,
-                                       use_context=True
-                                       )
+                                       use_context=True)
 
 # 5. initialize bare-bones sequence tagger (no CRF, no RNN, no reprojection)
 tagger = SequenceTagger(hidden_size=256,
@@ -44,7 +43,7 @@ tagger = SequenceTagger(hidden_size=256,
 trainer = ModelTrainer(tagger, corpus)
 
 # 7. run fine-tuning
-trainer.fine_tune('/home/yliu498/BERT/models/bert_uncased',
+trainer.fine_tune('/home/yliu498/BERT/models/base-bert',
                   learning_rate=5e-6,
                   mini_batch_size=4,
                   mini_batch_chunk_size=1)
