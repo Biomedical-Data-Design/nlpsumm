@@ -1,0 +1,7 @@
+1. Data pre-processing: get_training_data & get_testing_data is for data cleaning and BIO tagger
+2. Training dataset: trainingdata_noPHI, trainingdata2_noPHI, and train_withoutphi is trainingset1, trainingset2 and the combination
+3. Testing dataset: test_withoutphi
+4. Train and test: use training_and_testing and follow the comments in it
+
+
+5. Label_replace is for situation if we need to change the labels of some categories
