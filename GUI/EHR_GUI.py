@@ -5,7 +5,6 @@ from st_aggrid import GridOptionsBuilder, AgGrid, JsCode
 from st_aggrid.grid_options_builder import GridOptionsBuilder
 #import streamlit_scrollable_textbox as stx
 from streamlit.components.v1 import html
-import base64
 import re
 import numpy as np
 import pandas as pd
