@@ -81,7 +81,12 @@ if select_event is not None:
             df,
             gridOptions=gridOption,
             allow_unsafe_jscode=True,)
+    if "df" not in st.session_state:
+        st.session_state.df = df
+    
+    st.session_state.df = ag_grid["data"]
 
+    reference_df = st.session_state.df.copy()
     # make timeline
     items = []
     for i in range(len(names)):
@@ -93,35 +98,55 @@ if select_event is not None:
     }
     timeline = st_timeline(items, groups=[], options=opts)
 
+    
 
     # show text
-    st.subheader("Health Record (click timeline to show)")
+
     if timeline is not None:
+        st.subheader("Health Record: "+timeline["content"])
         num = names.index(timeline["content"])
-        tree = ET.parse(my_upload[num])
-        root = tree.getroot()
-        nt = re.sub('\n',' ',root[0].text)
-        nt = re.sub('\t',' ',nt) 
-        nt = re.sub('"',"'",nt)
-        ## sample 214 has a weird character
-        nt = re.sub('>','&gt;',nt) 
-        nt = re.sub('<','&lt;',nt)
-        ## new wired character
-        nt = re.sub('Â',' ',nt)
-        nt = re.sub('â',' ',nt)
-        nt = re.sub('€',' ',nt)
-        nt = re.sub('™',' ',nt)
-        words = nt.strip().split()
-        to_be_tag = ["Record"]
-        annotated = []
-        for i in words:
-            if i in to_be_tag:
-                add = (i+' ', "verb")
-            else:
-                add = i+' '
-            annotated.append(add)
-        tt = util.get_annotated_html(annotated)
-        html(tt, height=100, scrolling=True)
+        ## get what check box is selected for a document
+        if "selected_rows_array" not in st.session_state:
+            st.session_state.selected_rows_array = st.session_state.df.iloc[:,num+1].array
+        if not np.array_equal(st.session_state.selected_rows_array, st.session_state.df.iloc[:,num+1].array):
+            st.session_state.selected_rows_array = st.session_state.df.iloc[:,num+1].array
+            st.experimental_rerun()
+        rows = [idx for idx, value in enumerate(list(st.session_state.selected_rows_array)) if value == True]
+        categories = list(st.session_state.df.iloc[rows,0])
+        
+        if len(rows) == 0:
+            html("Please select a category", height=100, scrolling=True)
+        else:
+            ## get original text
+            tree = ET.parse(my_upload[num])
+            root = tree.getroot()
+            nt = re.sub('\n',' ',root[0].text)
+            nt = re.sub('\t',' ',nt) 
+            nt = re.sub('"',"'",nt)
+            nt = re.sub('>','&gt;',nt) 
+            nt = re.sub('<','&lt;',nt)
+            nt = re.sub('Â',' ',nt)
+            nt = re.sub('â',' ',nt)
+            nt = re.sub('€',' ',nt)
+            nt = re.sub('™',' ',nt)
+            words = nt.strip().split()
+            to_be_tag = {"CAD": ["Record"],
+                        "Smoker": ["I"],
+                        "Medication": ["not"],
+                        "Hypertention": ["him"],
+                        "Diabetes": ["you"]}
+            annotated = []
+
+            for i in words:
+                for c in categories:
+                    if i in to_be_tag[c]:
+                        add = (i+' ', "verb")
+                        break
+                    else:
+                        add = i+' '
+                annotated.append(add)
+            tt = util.get_annotated_html(annotated)
+            html(tt, height=100, scrolling=True)
     else:
         tt = util.get_annotated_html(["This ", "is ", ("a ", "verb"), "preview."])
         html(tt, height=100, scrolling=True)
