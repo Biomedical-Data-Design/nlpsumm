@@ -111,20 +111,17 @@ if select_event is not None:
         nt = re.sub('â',' ',nt)
         nt = re.sub('€',' ',nt)
         nt = re.sub('™',' ',nt)
-        html(nt, height=100, scrolling=True)
+        words = nt.strip().split()
+        to_be_tag = ["Record"]
+        annotated = []
+        for i in words:
+            if i in to_be_tag:
+                add = (i+' ', "verb")
+            else:
+                add = i+' '
+            annotated.append(add)
+        tt = util.get_annotated_html(annotated)
+        html(tt, height=100, scrolling=True)
     else:
-        tt = util.get_annotated_html(
-        "This ",
-        ("is", "verb"),
-        " some ",
-        ("annotated", "adj"),
-        ("text", "noun"),
-        " for those of ",
-        ("you", "pronoun"),
-        " who ",
-        ("like", "verb"),
-        " this sort of ",
-        ("thing", "noun"),
-        "."
-        )
+        tt = util.get_annotated_html(["This ", "is ", ("a ", "verb"), "preview."])
         html(tt, height=100, scrolling=True)
