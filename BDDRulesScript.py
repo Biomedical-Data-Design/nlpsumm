@@ -90,7 +90,7 @@ for fileName in os.listdir('BDDDataset/testing-RiskFactors-Gold/'): #Input EHRs
                     histKnown = True
                 """
             sentences0 = fileString.split('\t')
-            sentences = [sent for senty in sentences0 for sent in senty.split(".")]
+            sentences = [s3 for senty in sentences0 for sent in senty.split(".") for s3 in sent.split("\n")]
             for sentence in sentences:
                 if famHist(sentence):
                     histKnown = True
