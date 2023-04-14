@@ -36,6 +36,7 @@ if select_event is not None:
     data = {"Category": ["CAD", "Medication", "Smoker", "Hypertention", "Diabetes"]}
     df = pd.DataFrame(data)
     for i in range(len(names)):
+        # here change the value to reflect true categories for each docu
         df.insert(loc=i+1, column=names[i], value=False)
 
     # render check box from Java
@@ -65,7 +66,6 @@ if select_event is not None:
         """
         )
     
-
     # make check box
     gd = GridOptionsBuilder.from_dataframe(df)
     #gd.configure_pagination(enabled = True)
@@ -80,15 +80,16 @@ if select_event is not None:
             df,
             gridOptions=gridOption,
             allow_unsafe_jscode=True,)
+    # update the hight based on check box changes
     if "df" not in st.session_state:
-        st.session_state.df = df
+        st.session_state.df = []
     
     st.session_state.df = ag_grid["data"]
-
-    reference_df = st.session_state.df.copy()
+    st.write(ag_grid["data"])
     # make timeline
     items = []
     for i in range(len(names)):
+        # add the date to "start": date
         temp = {"content": names[i], "start": i}
         items.append(temp)
     opts = {
@@ -100,13 +101,13 @@ if select_event is not None:
     
 
     # show text
-
     if timeline is not None:
         st.subheader("Health Record: "+timeline["content"])
         num = names.index(timeline["content"])
         ## get what check box is selected for a document
         if "selected_rows_array" not in st.session_state:
-            st.session_state.selected_rows_array = st.session_state.df.iloc[:,num+1].array
+            st.session_state.selected_rows_array = []
+        st.session_state.selected_rows_array = st.session_state.df.iloc[:,num+1].array
         if not np.array_equal(st.session_state.selected_rows_array, st.session_state.df.iloc[:,num+1].array):
             st.session_state.selected_rows_array = st.session_state.df.iloc[:,num+1].array
             st.experimental_rerun()
