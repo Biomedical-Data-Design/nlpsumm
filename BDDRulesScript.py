@@ -52,7 +52,7 @@ for fileName in os.listdir('BDDDataset/testing-RiskFactors-Gold/'): #Input EHRs
                     histKnown = True
                 """
             sentences0 = fileString.split('\t')
-            sentences = [s3 for senty in sentences0 for sent in senty.split(".") for s3 in sent.split("\n")]
+            sentences = [sent for senty in sentences0 for sent in senty.split(".")]
             for tag in tagsList:
                 """
                 if '<FAMILY_HIST' in tag and 'indicator="present" ' in tag: 
