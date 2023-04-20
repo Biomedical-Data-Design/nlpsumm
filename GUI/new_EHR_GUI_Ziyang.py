@@ -20,7 +20,7 @@ st.set_page_config(page_title=apptitle, page_icon=":eyeglasses:",layout="wide")
 st.sidebar.markdown("## Input files")
 my_upload = st.sidebar.file_uploader("Upload an file or a folder", type=["csv"])
 
-#default path
+#default path to load current data
 default_upload = "D:/GitHub/nlpsumm/GUI/corpus_test.csv"
 
 select_event = None
@@ -41,7 +41,7 @@ else:
     select_event = st.sidebar.selectbox('select a patient?', names)
     xldf = rawin[rawin["PatientID"] == select_event]
 
-# get the time
+# get the time for creating timeline
 filetime_list = []
 for text_tag_str in xldf["Real_text_tag"].tolist():
     #remove the first and last []
@@ -58,12 +58,13 @@ for text_tag_str in xldf["Real_text_tag"].tolist():
 
 # main page
 st.title('Patient Overview')
+st.write(filetime_list)
 st.markdown("""
 * Use the menu at left to select a patient
 * Patient's summary will appear below
 """)
 if select_event is not None:
-    # test df
+    # create df for checkbox
     all_cat = ["CAD", "MEDICATION", "SMOKER", "HYPERTENSION", "DIABETES",'FAMILY_HIST','OBESE','HYPERLIPIDEMIA']
     dat_cat = pd.DataFrame(all_cat, columns=['Category'])
     dat_doc = pd.DataFrame()
@@ -124,6 +125,7 @@ if select_event is not None:
             allow_unsafe_jscode=True,
             data_return_mode="as_input",
             update_mode="grid_changed")
+    
     # update the hight based on check box changes
     if "df" not in st.session_state:
         st.session_state.df = df
@@ -135,13 +137,12 @@ if select_event is not None:
     items = []
     for i in range(xldf["TimeID"].shape[0]):
         # add the date to "start": date
-        temp = {"content": filetime_list[i], "start": i}
+        temp = {"content": filetime_list[i], "start": filetime_list[i]}
         items.append(temp)
     opts = {
-        "height": '150px',
+        "height": '200px',
         "moveable": False,
         "zoomable": False,
-        "start": 0,
         # "end": len(items),
         "timeAxis": {"scale": "year", "step": 1}
     }
