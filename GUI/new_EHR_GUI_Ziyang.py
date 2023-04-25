@@ -58,7 +58,6 @@ for text_tag_str in xldf["Real_text_tag"].tolist():
 
 # main page
 st.title('Patient Overview')
-st.write(filetime_list)
 st.markdown("""
 * Use the menu at left to select a patient
 * Patient's summary will appear below
