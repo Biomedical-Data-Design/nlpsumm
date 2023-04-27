@@ -10,21 +10,21 @@ import numpy as np
 import pandas as pd
 import xml.etree.ElementTree as ET
 from ast import literal_eval as le
-# -- Set page config
-apptitle = 'EHR summary'
 
+# -- Set page config
+apptitle = 'EHR summary' #website name
 st.set_page_config(page_title=apptitle, page_icon=":eyeglasses:",layout="wide")
 
 
 # side bar
-st.sidebar.markdown("## Input files")
-my_upload = st.sidebar.file_uploader("Upload an file or a folder", type=["csv"])
+st.sidebar.markdown("## Input files") #side bar name
+my_upload = st.sidebar.file_uploader("Upload an file or a folder", type=["csv"]) #file upload panel
 
 #default path to load current data
 default_upload = "D:/GitHub/nlpsumm/GUI/corpus_test.csv"
 
 select_event = None
-if my_upload is not None:
+if my_upload is not None: # if there is no new data, show the old processed csv
     rawin = pd.read_csv(my_upload)
     rawin["PatientID"] = rawin["PatientID"].map(str)
     rawin["TimeID"] = rawin["TimeID"].map(str)
