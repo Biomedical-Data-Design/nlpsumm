@@ -5,10 +5,10 @@
 This is a repo for Coronary artery disease (CAD) electronic health record (EHR) summarization. It contains a pipeline for processing the xml data and NLP model for extracting information. 
 A GUI is also integrated to visulize the result
 
-`Pipeline.ipynb` 
+`Pipeline.ipynb` <br />
 A jupyter notebook format final pipeline. It contains data preprocessing, creating input files to the algorithms, and evaluation
 
-`GUI` 
+`GUI` <br />
 The integrated GUI is created using Streamlit and is located in a public Github repo (https://github.com/lyz9928/EHR). The GUI can also be direcctly accessed with the link: https://ehr-summary.streamlit.app/
 
 ## Usage
