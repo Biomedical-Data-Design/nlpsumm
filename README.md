@@ -9,6 +9,11 @@ A GUI is also integrated to visulize the result
 
 `GUI` The integrated GUI is created using Streamlit and is located in a public Github repo (https://github.com/lyz9928/EHR). The GUI can also be direcctly accessed with the link: https://ehr-summary.streamlit.app/
 
+## Usage
+
+1. Request data access at i2b2 2014 website (https://portal.dbmi.hms.harvard.edu/projects/n2c2-2014/)
+2. Go to script folder and access the pipeline
+3. Further instruction please see details within the pipeline
 
 ## References
 
