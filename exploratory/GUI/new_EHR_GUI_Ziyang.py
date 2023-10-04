@@ -21,7 +21,9 @@ st.sidebar.markdown("## Input files") #side bar name
 my_upload = st.sidebar.file_uploader("Upload an file or a folder", type=["csv"]) #file upload panel
 
 #default path to load current data
-default_upload = "D:\GitHub\EHR\corpus_test.csv"
+# default_upload = "D:\GitHub\EHR\corpus_test.csv" #default path for pc
+default_upload = "/Volumes/WD850x-ZX/nlpsumm/exploratory/GUI/corpus_test.csv" #default path for mac
+
 
 select_event = None
 if my_upload is not None: # if there is no new data, show the old processed csv
